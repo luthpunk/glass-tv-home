@@ -4853,7 +4853,15 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         anchor.getLocationInWindow(menuAt);
         root.getLocationInWindow(menuGliderAt);
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(width, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp.leftMargin = Math.max(0, Math.min(menuAt[0] - menuGliderAt[0], root.getWidth() - width));
+        int sideMargin = Math.round(56 * density);
+        int maxRight = root.getWidth() - sideMargin;
+        View settingsBtn = topSettings != null ? topSettings : findViewById(R.id.btnSettings);
+        if (settingsBtn != null && settingsBtn.getWidth() > 0) {
+            int[] setAt = new int[2];
+            settingsBtn.getLocationInWindow(setAt);
+            maxRight = setAt[0] - menuGliderAt[0] + settingsBtn.getWidth();
+        }
+        lp.leftMargin = Math.max(sideMargin, Math.min(menuAt[0] - menuGliderAt[0], maxRight - width));
         int gap = (int) (10 * density);
         if (above) {
             panel.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY), View.MeasureSpec.UNSPECIFIED);
@@ -4865,31 +4873,36 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         openMenu = panel;
         menuAnchor = anchor;
 
-        // Focus stays in the menu until it closes. Leaving it towards the anchor closes it, and the
-        // selection glides back into what it opened from.
-        View first = null, last = null;
+        // Focus stays strictly inside the menu rows until it closes.
+        final List<View> focusableRows = new ArrayList<>();
         for (int i = 0; i < rows.getChildCount(); i++) {
             View row = rows.getChildAt(i);
             if (!row.isFocusable()) continue;
-            if (first == null) first = row;
-            last = row;
+            focusableRows.add(row);
             row.setOnFocusChangeListener((v, has) -> {
                 if (has) glideToMenuRow(panel, rows, v);
             });
         }
-        final View top = first, bottom = last;
-        for (int i = 0; i < rows.getChildCount(); i++) {
-            View row = rows.getChildAt(i);
-            if (!row.isFocusable()) continue;
+        final View top = focusableRows.isEmpty() ? null : focusableRows.get(0);
+        final View bottom = focusableRows.isEmpty() ? null : focusableRows.get(focusableRows.size() - 1);
+        for (int i = 0; i < focusableRows.size(); i++) {
+            final int idx = i;
+            View row = focusableRows.get(i);
             row.setOnKeyListener((v, keyCode, event) -> {
                 boolean down = event.getAction() == KeyEvent.ACTION_DOWN;
                 switch (keyCode) {
                     case KeyEvent.KEYCODE_DPAD_UP:
-                        if (v != top) return false;
+                        if (idx > 0) {
+                            if (down) focusableRows.get(idx - 1).requestFocus();
+                            return true;
+                        }
                         if (down && !above) closeMenu(true);
                         return true;
                     case KeyEvent.KEYCODE_DPAD_DOWN:
-                        if (v != bottom) return false;
+                        if (idx < focusableRows.size() - 1) {
+                            if (down) focusableRows.get(idx + 1).requestFocus();
+                            return true;
+                        }
                         if (down && above) closeMenu(true);
                         return true;
                     case KeyEvent.KEYCODE_DPAD_LEFT:
