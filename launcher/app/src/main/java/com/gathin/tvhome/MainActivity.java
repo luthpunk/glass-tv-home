@@ -381,7 +381,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         if (heroName != null) heroName.setMaxWidth(heroNameMaxWidth);
         if (heroDesc != null) heroDesc.setMaxWidth(heroMaxWidth);
 
-        String activeCat = getSharedPreferences("wallpaper_prefs", MODE_PRIVATE).getString("active_category", "Malaysia");
+        String activeCat = getSharedPreferences("wallpaper_prefs", MODE_PRIVATE).getString("active_category", "Indonesia");
+        if ("Malaysia".equalsIgnoreCase(activeCat)) activeCat = "Indonesia";
         if ("Custom".equalsIgnoreCase(activeCat)) {
             placesMode = false;
             File customDir = new File(getFilesDir(), "custom_wallpapers");
@@ -958,9 +959,11 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         if (wallView == null) {
             wallView = new android.widget.ImageView(this);
             wallView.setScaleType(android.widget.ImageView.ScaleType.CENTER_CROP);
-            // Photos are bright: dim them so the clock, names and tiles stay readable.
-            if (placesMode) wallView.setColorFilter(0xFF7A7A7A, android.graphics.PorterDuff.Mode.MULTIPLY);
             root.addView(wallView, 0, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        }
+        // Dim all wallpapers so the clock, weather, and white widgets stay crisp and readable.
+        if (!wallpaperFullscreen) {
+            wallView.setColorFilter(0xFF6E6E6E, android.graphics.PorterDuff.Mode.MULTIPLY);
         }
         android.graphics.Bitmap old = wallBitmap;
         wallBitmap = bmp;
@@ -995,7 +998,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     /** Hands the picture now on screen to the glass, which blurs it once, off the main thread. */
     private void blurBackdrop(android.graphics.Bitmap bmp) {
         android.util.DisplayMetrics dm = getResources().getDisplayMetrics();
-        Backdrop.update(bmp, dm.widthPixels, dm.heightPixels, placesMode ? 0xFF7A7A7A : 0, wallDecoder, handler);
+        Backdrop.update(bmp, dm.widthPixels, dm.heightPixels, 0xFF6E6E6E, wallDecoder, handler);
     }
 
     /** Shows the next picture from the wallpapers folder; the position survives restarts. */
@@ -1017,7 +1020,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             // not wait for its blur: Home is held for it, and the glass catches up a moment later.
             android.util.DisplayMetrics dm = getResources().getDisplayMetrics();
             android.graphics.Bitmap blur = firstPicture ? null
-                    : Backdrop.blur(bmp, dm.widthPixels, dm.heightPixels, placesMode ? 0xFF7A7A7A : 0);
+                    : Backdrop.blur(bmp, dm.widthPixels, dm.heightPixels, 0xFF6E6E6E);
             handler.post(() -> {
                 if (isDestroyed()) return;
                 setWallpaper(bmp, fade, blur);
@@ -1393,11 +1396,11 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             ambient.animate().alpha(0f).setDuration(duration).start();
         }
 
-        if (wallView != null && placesMode) {
+        if (wallView != null) {
             if (fullscreen) {
                 wallView.clearColorFilter();
             } else {
-                wallView.setColorFilter(0xFF7A7A7A, android.graphics.PorterDuff.Mode.MULTIPLY);
+                wallView.setColorFilter(0xFF6E6E6E, android.graphics.PorterDuff.Mode.MULTIPLY);
             }
         }
     }
@@ -1504,8 +1507,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             }
         }
 
-        // When using custom wallpaper, disable the description part completely
-        if (isCustomWallpaper()) {
+        // When using custom wallpaper or before wallpaper place name is ready, hide the shelf completely
+        if (isCustomWallpaper() || placeName == null) {
             if (heroShelf != null) {
                 heroShelf.animate().cancel();
                 heroShelf.setAlpha(0f);
@@ -1520,11 +1523,9 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             heroShelf.setVisibility(View.VISIBLE);
         }
 
-        // The place the picture is of, when there is one; the app's own name is the fallback for
-        // the user's own wallpapers, which carry no title.
-        final String label = placeName != null ? placeName : adapter.labelAt(position);
-        final String desc = placeName != null ? placeText : "";
-        final String where = placeName != null ? placeCountry : "";
+        final String label = placeName;
+        final String desc = placeText != null ? placeText : "";
+        final String where = placeCountry != null ? placeCountry : "";
         float y = heroBottom - heroShelf.getHeight();
         boolean changed = !label.contentEquals(heroName.getText());
 
@@ -1711,12 +1712,20 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         String country = about != null && about.length > 2 ? about[2] : "";
         if (country != null) {
             country = country.replaceAll("(?i)\\bunsplash\\s*•?\\s*", "").trim();
-            if (country.startsWith("Malaysia_")) {
+            if (country.startsWith("Indonesia_")) {
+                String st = country.substring("Indonesia_".length());
+                if ("JawaTimur".equalsIgnoreCase(st)) st = "Jawa Timur";
+                else if ("JawaTengah".equalsIgnoreCase(st)) st = "Jawa Tengah";
+                else if ("JawaBarat".equalsIgnoreCase(st)) st = "Jawa Barat";
+                else if ("SumateraUtara".equalsIgnoreCase(st)) st = "Sumatera Utara";
+                else if ("NTT".equalsIgnoreCase(st)) st = "Nusa Tenggara Timur";
+                else if ("NTB".equalsIgnoreCase(st)) st = "Nusa Tenggara Barat";
+                else if ("Jakarta".equalsIgnoreCase(st)) st = "DKI Jakarta";
+                else if ("Yogyakarta".equalsIgnoreCase(st)) st = "DI Yogyakarta";
+                country = st + ", Indonesia";
+            } else if (country.startsWith("Malaysia_")) {
                 String st = country.substring("Malaysia_".length());
-                if ("WP".equalsIgnoreCase(st)) st = "Wilayah Persekutuan";
-                else if ("NegeriSembilan".equalsIgnoreCase(st)) st = "Negeri Sembilan";
-                else if ("PulauPinang".equalsIgnoreCase(st)) st = "Pulau Pinang";
-                country = st + ", Malaysia";
+                country = st + ", Indonesia";
             }
         }
         if (title != null) {
@@ -1734,9 +1743,13 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             final String t = title;
             final String c = country;
             final String o = overview;
+            if (heroShelf != null) {
+                heroShelf.setVisibility(View.VISIBLE);
+            }
             heroShelf.animate().cancel();
             heroShelf.animate().alpha(0f).setDuration(reducedMotion ? 100 : 250).withEndAction(() -> {
                 setHeroText(t, c, o);
+                if (heroBottom > 0) heroShelf.setY(heroBottom - heroShelf.getHeight());
                 if (heroShown) heroShelf.animate().alpha(1f).setDuration(reducedMotion ? 120 : 400).start();
             }).start();
         }
@@ -3384,7 +3397,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         File[] customFiles = customDir.listFiles((dir, name) -> name.endsWith(".jpg") || name.endsWith(".png") || name.endsWith(".jpeg"));
         int customCount = (customFiles != null) ? customFiles.length : 0;
 
-        String currentKey = getSharedPreferences("wallpaper_prefs", MODE_PRIVATE).getString("active_category", "Malaysia");
+        String currentKey = getSharedPreferences("wallpaper_prefs", MODE_PRIVATE).getString("active_category", "Indonesia");
+        if ("Malaysia".equalsIgnoreCase(currentKey)) currentKey = "Indonesia";
 
         class WallpaperOption {
             final String key;
@@ -3398,7 +3412,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         }
 
         List<WallpaperOption> options = new ArrayList<>();
-        options.add(new WallpaperOption("Malaysia", "🏞️ Wisata & Landmark Asia", "16 Koleksi 4K Ikonik (Pexels Ultra HD)"));
+        options.add(new WallpaperOption("Indonesia", "🇮🇩 Pesona Nusantara (Indonesia)", "16 Koleksi 4K Alam & Candi Ikonik Indonesia"));
         options.add(new WallpaperOption("Natural", "🌿 Alam & Pemandangan", "Pegunungan, Hutan & Aurora 4K"));
         options.add(new WallpaperOption("Skyscraper", "🏙️ Gedung Pencakar Langit & Kota", "Metropolis Modern & Arsitektur"));
         options.add(new WallpaperOption("Space", "🌌 Luar Angkasa & Kosmos", "Galaksi, Nebula & Bintang (Deep Space)"));
@@ -3443,7 +3457,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
 
         for (int i = 0; i < options.size(); i++) {
             WallpaperOption opt = options.get(i);
-            boolean isActive = opt.key.equalsIgnoreCase(currentKey) || (opt.key.equals("Malaysia") && currentKey.startsWith("Malaysia"));
+            boolean isActive = opt.key.equalsIgnoreCase(currentKey) || (opt.key.equals("Indonesia") && (currentKey.startsWith("Indonesia") || currentKey.startsWith("Malaysia")));
 
             LinearLayout row = new LinearLayout(this);
             row.setOrientation(LinearLayout.VERTICAL);
@@ -3671,7 +3685,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
 
     private void switchWallpaperCategory(String category) {
         getSharedPreferences("wallpaper_prefs", MODE_PRIVATE).edit().putString("active_category", category).apply();
-        String displayLabel = "Malaysia".equalsIgnoreCase(category) ? "Wisata & Landmark Asia" : category;
+        String displayLabel = ("Indonesia".equalsIgnoreCase(category) || "Malaysia".equalsIgnoreCase(category)) ? "Pesona Nusantara" : category;
         Toast.makeText(this, "Kategori: " + displayLabel, Toast.LENGTH_SHORT).show();
 
         if ("Custom".equalsIgnoreCase(category)) {

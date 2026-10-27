@@ -53,109 +53,109 @@ final class OnlineWallpapers {
         }
     }
 
-    // Built-in curated catalog of dark, moody, atmospheric 4K desktop wallpapers (Unsplash)
+    // Built-in curated catalog of dark, moody, atmospheric 4K desktop wallpapers (Unsplash & Pexels)
     private static final WallpaperItem[] CURATED_CATALOG = new WallpaperItem[]{
-            // Malaysia: Tempat Menarik di Malaysia (16 Koleksi Pexels 4K Ultra HD)
-            new WallpaperItem("https://images.pexels.com/photos/40168956/pexels-photo-40168956.jpeg?auto=compress&cs=tinysrgb&w=3840&h=2160",
-                    "Orangutan Rimba Borneo", "Spesies ikonik hidupan liar di kanopi hutan hujan tropika Borneo, khazanah alam semula jadi", "Malaysia_Sabah"),
-            new WallpaperItem("https://images.pexels.com/photos/36767161/pexels-photo-36767161.jpeg?auto=compress&cs=tinysrgb&w=3840&h=2160",
-                    "Siluet Senja Kuala Lumpur", "Garis langit metropolis ibu negara berlatarkan kilauan warna merah saga dan jingga waktu senja", "Malaysia_WP"),
-            new WallpaperItem("https://images.pexels.com/photos/338416/pexels-photo-338416.jpeg?auto=compress&cs=tinysrgb&w=3840&h=2160",
-                    "Masjid Putra & Tasik Putrajaya", "Keindahan seni bina kubah merah jambu Masjid Putra membiaskan pantulan anggun di permukaan tasik tenang", "Malaysia_Putrajaya"),
-            new WallpaperItem("https://images.pexels.com/photos/33676568/pexels-photo-33676568.jpeg?auto=compress&cs=tinysrgb&w=3840&h=2160",
-                    "Puncak Menara Berkembar KLCC", "Menara Berkembar Petronas tersergam megah meredah lautan awan keemasan di ufuk Kuala Lumpur", "Malaysia_WP"),
-            new WallpaperItem("https://images.pexels.com/photos/39690291/pexels-photo-39690291.jpeg?auto=compress&cs=tinysrgb&w=3840&h=2160",
-                    "Masjid Selat Melaka", "Masjid terapung tersohor di pesisir Selat Melaka disinari gemerlap lampu malam dan langit tembaga", "Malaysia_Melaka"),
-            new WallpaperItem("https://images.pexels.com/photos/33708542/pexels-photo-33708542.jpeg?auto=compress&cs=tinysrgb&w=3840&h=2160",
-                    "Calet Pergunungan Kundasang", "Kediaman unik di lereng bukit menghijau berlatarbelakangkan udara nyaman banjaran tanah tinggi Sabah", "Malaysia_Sabah"),
-            new WallpaperItem("https://images.pexels.com/photos/14776919/pexels-photo-14776919.jpeg?auto=compress&cs=tinysrgb&w=3840&h=2160",
-                    "Jalan Berliku Banjaran Titiwangsa", "Laluan berliku meredah rabung pergunungan hijau yang diselimuti kabut tebal waktu fajar", "Malaysia_Pahang"),
-            new WallpaperItem("https://images.pexels.com/photos/5224545/pexels-photo-5224545.jpeg?auto=compress&cs=tinysrgb&w=3840&h=2160",
-                    "Fajar Lembah Sungai Pahang", "Limpahan cahaya emas mentari pagi menyinari aliran sungai permai dan perkampungan pesisir bukit", "Malaysia_Pahang"),
-            new WallpaperItem("https://images.pexels.com/photos/11643318/pexels-photo-11643318.jpeg?auto=compress&cs=tinysrgb&w=3840&h=2160",
-                    "Senja Merah Lembah Sungai", "Panorama matahari terbenam membiaskan rona jingga tembaga di sepanjang liku sungai dan bukit bukau", "Malaysia_Pahang"),
-            new WallpaperItem("https://images.pexels.com/photos/28727775/pexels-photo-28727775.jpeg?auto=compress&cs=tinysrgb&w=3840&h=2160",
-                    "Pesisiran Pantai Tanjung Balau", "Kejernihan air laut membiru dan keunikan tanjung berbatu di Desaru menghadap Laut China Selatan", "Malaysia_Johor"),
-            new WallpaperItem("https://images.pexels.com/photos/38188372/pexels-photo-38188372.jpeg?auto=compress&cs=tinysrgb&w=3840&h=2160",
-                    "Jambatan Angkat Terengganu", "Seni bina jambatan angkat ikonik Kuala Terengganu bermandikan biasan sinaran matahari terbenam", "Malaysia_Terengganu"),
-            new WallpaperItem("https://images.pexels.com/photos/13890758/pexels-photo-13890758.jpeg?auto=compress&cs=tinysrgb&w=3840&h=2160",
-                    "Pekan Diraja Kuala Kangsar", "Pemandangan udara bandar warisan permai di tebingan Sungai Perak diapit kehijauan alam tropika", "Malaysia_Perak"),
-            new WallpaperItem("https://images.pexels.com/photos/139974/pexels-photo-139974.jpeg?auto=compress&cs=tinysrgb&w=3840&h=2160",
-                    "Perahu Nelayan Jalur Gemilang", "Bot nelayan tradisional berlabuh tenang di muara sungai ketika langit senja berona merah jambu", "Malaysia_Terengganu"),
-            new WallpaperItem("https://images.pexels.com/photos/5649468/pexels-photo-5649468.jpeg?auto=compress&cs=tinysrgb&w=3840&h=2160",
-                    "Masjid Negeri Shah Alam", "Kubah biru tersergam indah dan empat menara bercahaya Masjid Sultan Salahuddin Abdul Aziz Shah pada waktu malam", "Malaysia_Selangor"),
-            new WallpaperItem("https://images.pexels.com/photos/130576/pexels-photo-130576.jpeg?auto=compress&cs=tinysrgb&w=3840&h=2160",
-                    "Ladang Teh Cameron Highlands", "Hamparan bukit teh hijau beralun segar di bawah langit biru cerah tanah tinggi banjaran Pahang", "Malaysia_Pahang"),
-            new WallpaperItem("https://images.pexels.com/photos/35905094/pexels-photo-35905094.jpeg?auto=compress&cs=tinysrgb&w=3840&h=2160",
-                    "Beca Berhias Warisan Melaka", "Keunikan beca pelancongan berhias bunga dan lagu ceria menelusuri lorong warisan bersejarah bandar raya Melaka", "Malaysia_Melaka"),
+            // Indonesia: Pesona Alam & Landmark Nusantara (16 Koleksi 4K Ultra HD)
+            new WallpaperItem("https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?auto=format&fit=crop&w=3840&h=2160&q=80",
+                    "Kaldera Gunung Bromo", "Kabut pagi menyelimuti kawah Gunung Bromo dan lautan pasir Taman Nasional Bromo Tengger Semeru", "Indonesia_JawaTimur"),
+            new WallpaperItem("https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=3840&h=2160&q=80",
+                    "Kepulauan Raja Ampat", "Gugusan pulau karst hijau di tengah perairan biru zamrud Papua Barat Daya yang memukau", "Indonesia_Papua"),
+            new WallpaperItem("https://images.unsplash.com/photo-1596402184320-417e7178b2cd?auto=format&fit=crop&w=3840&h=2160&q=80",
+                    "Keagungan Candi Borobudur", "Siluet stupa bersejarah Candi Borobudur berlatar kabut senja dan perbukitan Menoreh", "Indonesia_JawaTengah"),
+            new WallpaperItem("https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=3840&h=2160&q=80",
+                    "Pura Ulun Danu Beratan", "Keindahan arsitektur pura di tepi Danau Beratan Bedugul yang tenang diselimuti kabut tipis", "Indonesia_Bali"),
+            new WallpaperItem("https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?auto=format&fit=crop&w=3840&h=2160&q=80",
+                    "Puncak Pulau Padar", "Panorama tiga teluk eksotis Taman Nasional Komodo di bawah langit senja keemasan", "Indonesia_NTT"),
+            new WallpaperItem("https://images.unsplash.com/photo-1555899434-94d1368aa7af?auto=format&fit=crop&w=3840&h=2160&q=80",
+                    "Gemerlap Malam Jakarta", "Garis langit gedung pencakar langit ibu kota dengan kilauan cahaya lampu kota di malam hari", "Indonesia_Jakarta"),
+            new WallpaperItem("https://images.unsplash.com/photo-1539367628448-4bc5c9d171c8?auto=format&fit=crop&w=3840&h=2160&q=80",
+                    "Tebing Pantai Kelingking", "Tebing karang ikonik Nusa Penida yang menjulang di atas deburan ombak biru Samudra Hindia", "Indonesia_Bali"),
+            new WallpaperItem("https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=3840&h=2160&q=80",
+                    "Terasering Sawah Ubud", "Hamparan sawah berundak hijau zamrud di lembah tropis Bali pada pagi yang teduh", "Indonesia_Bali"),
+            new WallpaperItem("https://images.unsplash.com/photo-1516690561799-46d8f74f9abf?auto=format&fit=crop&w=3840&h=2160&q=80",
+                    "Danau Kawah Ijen", "Danau kawah asam terbesar di dunia dengan warna hijau toska di puncak pegunungan Banyuwangi", "Indonesia_JawaTimur"),
+            new WallpaperItem("https://images.unsplash.com/photo-1501179691627-eeaa65ea017c?auto=format&fit=crop&w=3840&h=2160&q=80",
+                    "Hutan Hujan Tropis Kalimantan", "Kanopi rimba tropis Nusantara yang diselimuti kabut tipis seusai hujan sore hari", "Indonesia_Kalimantan"),
+            new WallpaperItem("https://images.unsplash.com/photo-1559628233-100c798642d4?auto=format&fit=crop&w=3840&h=2160&q=80",
+                    "Senja Pura Tanah Lot", "Pura karang di pesisir laut Bali yang berpadu dengan siluet matahari terbenam", "Indonesia_Bali"),
+            new WallpaperItem("https://images.unsplash.com/photo-1570789210967-2cac24afeb00?auto=format&fit=crop&w=3840&h=2160&q=80",
+                    "Kaldera Danau Toba", "Ketenangan air danau vulkanik raksasa Sumatera Utara yang dikelilingi perbukitan hijau", "Indonesia_SumateraUtara"),
+            new WallpaperItem("https://images.unsplash.com/photo-1565967511849-76a60a516170?auto=format&fit=crop&w=3840&h=2160&q=80",
+                    "Puncak Gunung Rinjani", "Pemandangan megah Danau Segara Anak dari punggung bukit vulkanik Gunung Rinjani", "Indonesia_NTB"),
+            new WallpaperItem("https://images.unsplash.com/photo-1584810359583-96fc3448beaa?auto=format&fit=crop&w=3840&h=2160&q=80",
+                    "Candi Prambanan Senja", "Kemegahan arsitektur candi Hindu tertinggi di Indonesia di bawah langit senja", "Indonesia_Yogyakarta"),
+            new WallpaperItem("https://images.unsplash.com/photo-1505993597083-3bd19fb75e57?auto=format&fit=crop&w=3840&h=2160&q=80",
+                    "Kabut Pegunungan Nusantara", "Barisan pegunungan tropis Indonesia yang berlapis kabut biru di waktu fajar", "Indonesia_JawaBarat"),
+            new WallpaperItem("https://images.unsplash.com/photo-1513415277900-a62401e19be4?auto=format&fit=crop&w=3840&h=2160&q=80",
+                    "Air Terjun Tumpak Sewu", "Tirai air terjun megah di kaki Gunung Semeru yang dikelilingi tebing rimbun", "Indonesia_JawaTimur"),
 
             // Nature & Landscapes (Alam Semula Jadi - Pexels & Unsplash 4K)
             new WallpaperItem("https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=3840&h=2160&q=80",
-                    "Moody Alpine Mountains", "Silhouetted mountain peaks under starry skies", "Landscape"),
+                    "Puncak Pegunungan Malam", "Siluet puncak gunung bersalju di bawah taburan bintang malam yang tenang", "Landscape"),
             new WallpaperItem("https://images.pexels.com/photos/1366919/pexels-photo-1366919.jpeg?auto=compress&cs=tinysrgb&w=3840&h=2160",
-                    "Moody Mountain Fog", "Mist rolling through dense mountain evergreen pine forest", "Landscape"),
+                    "Kabut Hutan Pinus", "Kabut tipis menyelimuti lembah hutan pinus pegunungan yang rimbun", "Landscape"),
             new WallpaperItem("https://images.unsplash.com/photo-1531366936337-7c912a4589a7?auto=format&fit=crop&w=3840&h=2160&q=80",
-                    "Dark Aurora Borealis", "Green atmospheric aurora dancing across arctic skies", "Nature"),
+                    "Cahaya Aurora Borealis", "Pendaran cahaya hijau aurora menari di langit malam kutub utara", "Nature"),
             new WallpaperItem("https://images.pexels.com/photos/1624496/pexels-photo-1624496.jpeg?auto=compress&cs=tinysrgb&w=3840&h=2160",
-                    "Starry Night Over Pines", "Bright starry cosmos illuminating tall silhouette pine forest", "Nature"),
+                    "Langit Berbintang di Atas Hutan", "Gugusan bintang menerangi siluet pepohonan pinus di malam yang hening", "Nature"),
             new WallpaperItem("https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=3840&h=2160&q=80",
-                    "Dark Misty Pine Forest", "Dense evergreen canopy cloaked in rolling fog", "Forest"),
+                    "Rimba Hutan Berkabut", "Kanopi pepohonan hijau tua yang teduh dalam balutan kabut pagi", "Forest"),
             new WallpaperItem("https://images.pexels.com/photos/1287145/pexels-photo-1287145.jpeg?auto=compress&cs=tinysrgb&w=3840&h=2160",
-                    "Serene Alpine Twilight", "Calm dusk sky casting reflections across quiet mountain lake", "Nature"),
+                    "Senja di Danau Pegunungan", "Langit senja yang tenang memantulkan bayangan gunung di permukaan danau", "Nature"),
             new WallpaperItem("https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=3840&h=2160&q=80",
-                    "Moody Lake Twilight", "Still dark waters reflecting misty mountain ridges", "Landscape"),
+                    "Lembah Danau Berkabut", "Air danau yang hening memantulkan punggung bukit berkabut", "Landscape"),
             new WallpaperItem("https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=3840&h=2160&q=80",
-                    "Dark Desert Dunes", "Shadows sweeping over desert dunes under the night sky", "Desert"),
+                    "Bukit Pasir Malam", "Bayangan lembut di atas hamparan gurun pasir saat malam tiba", "Desert"),
             new WallpaperItem("https://images.pexels.com/photos/3408744/pexels-photo-3408744.jpeg?auto=compress&cs=tinysrgb&w=3840&h=2160",
-                    "Majestic Snow Mountain Peak", "Crisp dramatic snow ridges against deep blue atmosphere", "Mountains"),
+                    "Puncak Salju Biru", "Tebing gunung bersalju di bawah atmosfer langit biru tua", "Mountains"),
             new WallpaperItem("https://images.unsplash.com/photo-1508739773434-c26b3d09e071?auto=format&fit=crop&w=3840&h=2160&q=80",
-                    "Dark Volcanic Landscape", "Black volcanic terrain and quiet minimalist horizon", "Nature"),
+                    "Bentang Alam Vulkanik", "Hamparan tanah vulkanik gelap dengan garis cakrawala minimalis", "Nature"),
 
-            // Cityscape & Architecture (Pencakar Langit & Bandar - Pexels & Unsplash 4K)
+            // Cityscape & Architecture (Pencakar Langit & Kota - Pexels & Unsplash 4K)
             new WallpaperItem("https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=3840&h=2160&q=80",
-                    "Tokyo Cyberpunk Alley", "Moody neon reflections in a narrow Tokyo alleyway", "Cityscape"),
+                    "Sudut Malam Cyberpunk", "Pantulan lampu neon atmosferik di lorong kota saat malam hari", "Cityscape"),
             new WallpaperItem("https://images.pexels.com/photos/374870/pexels-photo-374870.jpeg?auto=compress&cs=tinysrgb&w=3840&h=2160",
-                    "Metropolis Skyline Twilight", "Glowing skyscrapers towering over serene bay water", "Cityscape"),
+                    "Cakrawala Kota Senja", "Gedung pencakar langit berkilau di tepi teluk saat matahari terbenam", "Cityscape"),
             new WallpaperItem("https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=3840&h=2160&q=80",
-                    "Dark Neon Rain Street", "Vibrant reflections shimmering on wet asphalt", "Cityscape"),
+                    "Jalanan Kota Saat Hujan", "Kilauan lampu kota yang memantul di atas aspal basah malam hari", "Cityscape"),
             new WallpaperItem("https://images.pexels.com/photos/3052361/pexels-photo-3052361.jpeg?auto=compress&cs=tinysrgb&w=3840&h=2160",
-                    "Modern Glass Skyscraper", "Geometric glass architectural patterns rising into sky", "Architecture"),
+                    "Arsitektur Kaca Modern", "Pola geometris fasad gedung pencakar langit kaca yang menjulang tinggi", "Architecture"),
             new WallpaperItem("https://images.pexels.com/photos/169647/pexels-photo-169647.jpeg?auto=compress&cs=tinysrgb&w=3840&h=2160",
-                    "Cyberpunk Neon Night", "Futuristic high-density city streets glowing in vibrant magenta", "Cityscape"),
+                    "Gemerlap Metropolis Malam", "Lampu jalanan dan gedung tinggi yang berpendar di tengah malam", "Cityscape"),
             new WallpaperItem("https://images.unsplash.com/photo-1494548162494-384bba4ab999?auto=format&fit=crop&w=3840&h=2160&q=80",
-                    "Dark Foggy Suspension Bridge", "Golden Gate towers emerging through evening fog", "Architecture"),
+                    "Jembatan Gantung Berkabut", "Menara jembatan yang muncul di balik kabut senja yang dramatis", "Architecture"),
 
-            // Space & Astronomy (Angkasa & Kosmos - Unsplash 4K)
+            // Space & Astronomy (Luar Angkasa & Kosmos - Unsplash 4K)
             new WallpaperItem("https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=3840&h=2160&q=80",
-                    "Night Earth Orbit", "Planet Earth illuminated at night from outer space", "Space"),
+                    "Orbit Bumi Malam Hari", "Pemandangan planet Bumi yang berpendar dari orbit luar angkasa", "Space"),
             new WallpaperItem("https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=3840&h=2160&q=80",
-                    "Milky Way Galaxy", "Deep night sky filled with stellar constellations", "Astronomy"),
+                    "Galaksi Bima Sakti", "Langit malam pekat yang dipenuhi gugusan bintang Bima Sakti", "Astronomy"),
             new WallpaperItem("https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=3840&h=2160&q=80",
-                    "Deep Space Nebula", "Cosmic interstellar gas clouds and distant stars", "Cosmos"),
+                    "Nebula Antariksa", "Awan gas antarbintang dan taburan bintang di kedalaman kosmos", "Cosmos"),
             new WallpaperItem("https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?auto=format&fit=crop&w=3840&h=2160&q=80",
-                    "Cosmic Dark Starfield", "Deep black void speckled with distant galaxies", "Space"),
+                    "Hamparan Bintang Kosmik", "Ruang angkasa gelap yang dihiasi galaksi-galaksi jauh", "Space"),
 
             // Ocean & Water (Lautan & Pantai - Pexels & Unsplash 4K)
             new WallpaperItem("https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=3840&h=2160&q=80",
-                    "Deep Underwater Abyss", "Sunlight penetrating into the dark deep ocean", "Underwater"),
+                    "Kedalaman Samudra Biru", "Berkas cahaya matahari menembus ke dalam lautan biru yang tenang", "Underwater"),
             new WallpaperItem("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=3840&h=2160&q=80",
-                    "Midnight Ocean Waves", "Deep blue waves crashing on a tranquil dark shore", "Oceans"),
+                    "Ombak Laut Malam", "Gulungan ombak biru tua yang menyapu pesisir pantai yang teduh", "Oceans"),
             new WallpaperItem("https://images.pexels.com/photos/1001682/pexels-photo-1001682.jpeg?auto=compress&cs=tinysrgb&w=3840&h=2160",
-                    "Deep Ocean Wave Crest", "Powerful sea water curling in turquoise deep shades", "Oceans"),
+                    "Gulungan Ombak Samudra", "Alunan ombak laut dalam dengan gradasi warna biru toska gelap", "Oceans"),
             new WallpaperItem("https://images.pexels.com/photos/1032650/pexels-photo-1032650.jpeg?auto=compress&cs=tinysrgb&w=3840&h=2160",
-                    "Tropical Turquoise Deep Water", "Aerial view of calm ocean reef gradient", "Oceans"),
+                    "Perairan Tropis Tenang", "Pemandangan udara gradasi air laut tropis dan terumbu karang", "Oceans"),
             new WallpaperItem("https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=3840&h=2160&q=80",
-                    "Dark Ocean Trench", "Bioluminescent glow illuminating the deep ocean", "Underwater"),
+                    "Palung Laut Dalam", "Pendaran cahaya biru lembut di kedalaman samudra", "Underwater"),
             new WallpaperItem("https://images.pexels.com/photos/1295138/pexels-photo-1295138.jpeg?auto=compress&cs=tinysrgb&w=3840&h=2160",
-                    "Dramatic Sea Cliffs", "Dark oceanic cliffs meeting moody breaking waves", "Coast"),
+                    "Tebing Karang Pesisir", "Tebing batu gelap yang berpadu dengan deburan ombak laut", "Coast"),
 
             // Minimalist & Atmospheric (Minimalis Gelap - Unsplash & Pexels 4K)
             new WallpaperItem("https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?auto=format&fit=crop&w=3840&h=2160&q=80",
-                    "Rainy Window Twilight", "Water droplets cascading down glass against city dusk", "Atmospheric"),
+                    "Rintik Hujan di Jendela", "Tetesan air hujan pada kaca jendela dengan latar senja yang redup", "Atmospheric"),
             new WallpaperItem("https://images.unsplash.com/photo-1510312305653-8ed496efae75?auto=format&fit=crop&w=3840&h=2160&q=80",
-                    "Starry Desert Camp", "Distant campfire underneath an endless starlit dome", "Nature"),
+                    "Malam Berbintang di Gurun", "Ketenangan malam di bawah kubah langit penuh bintang", "Nature"),
             new WallpaperItem("https://images.unsplash.com/photo-1491557345352-5929e343eb89?auto=format&fit=crop&w=3840&h=2160&q=80",
-                    "Moody Black Mountains", "Dramatic jagged peaks cutting through dark storm clouds", "Mountains")
+                    "Puncak Gunung Gelap", "Siluet tebing gunung di balik awan gelap yang dramatis", "Mountains")
     };
 
     private OnlineWallpapers() {
@@ -189,12 +189,12 @@ final class OnlineWallpapers {
         if (itemCat == null) return false;
         String ic = itemCat.toLowerCase(Locale.ROOT);
         String sc = selectedCat.toLowerCase(Locale.ROOT);
-        if (sc.startsWith("malaysia_")) {
-            String state = sc.substring("malaysia_".length());
+        if (sc.startsWith("indonesia_") || sc.startsWith("malaysia_")) {
+            String state = sc.substring(sc.indexOf('_') + 1);
             return ic.contains(state);
         }
-        if (sc.equals("malaysia") || sc.equals("malaysia_all")) {
-            return ic.contains("malay");
+        if (sc.equals("indonesia") || sc.equals("indonesia_all") || sc.equals("malaysia") || sc.equals("malaysia_all")) {
+            return ic.contains("indonesia");
         }
         if (sc.contains("sky") || sc.contains("arch") || sc.contains("city")) {
             return ic.contains("sky") || ic.contains("arch") || ic.contains("city") || ic.contains("urban");
@@ -221,22 +221,17 @@ final class OnlineWallpapers {
         if (d == null || !d.exists()) return;
         Set<String> validHashes = new HashSet<>();
         for (WallpaperItem item : CURATED_CATALOG) {
-            if (matchesCategory(item.category, category)) {
-                validHashes.add(hashFilename(item.url));
-            }
+            validHashes.add(hashFilename(item.url));
         }
         File[] files = d.listFiles((dir, name) -> name.endsWith(".jpg"));
         if (files == null) return;
         for (File f : files) {
             String base = f.getName().replace(".jpg", "");
             if (!validHashes.contains(base)) {
-                String[] desc = describe(f);
-                if (desc != null && desc.length >= 3 && matchesCategory(desc[2], category)) {
-                    f.delete();
-                    File txt = new File(d, base + ".txt");
-                    if (txt.exists()) txt.delete();
-                    Log.i(TAG, "Removed outdated " + category + " wallpaper: " + f.getName());
-                }
+                f.delete();
+                File txt = new File(d, base + ".txt");
+                if (txt.exists()) txt.delete();
+                Log.i(TAG, "Removed outdated wallpaper: " + f.getName());
             }
         }
     }
