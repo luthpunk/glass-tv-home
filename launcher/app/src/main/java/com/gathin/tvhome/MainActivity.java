@@ -2238,6 +2238,16 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         if (screensaverActive) {
             updateNightstandScreensaver();
         }
+        applyPrayerVisibility();
+    }
+
+    /** Hides the Waktu Solat header, table and fallback line when config.xml show_prayer_times is false. */
+    private void applyPrayerVisibility() {
+        if (getResources().getBoolean(R.bool.show_prayer_times)) return;
+        if (prayerTimesView != null) prayerTimesView.setVisibility(View.GONE);
+        if (prayerHeader != null) prayerHeader.setVisibility(View.GONE);
+        View table = findViewById(R.id.prayerTable);
+        if (table != null) table.setVisibility(View.GONE);
     }
 
     private void updateWeatherAqi() {

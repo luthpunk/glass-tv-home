@@ -58,6 +58,8 @@
     <string name="vpn_app" translatable="false"></string>
     <!-- The Wi-Fi / Ethernet pill in the top bar. false hides it; Settings still reaches the network pages. -->
     <bool name="show_network_pill">true</bool>
+    <!-- The Waktu Solat header and table on Home (JAKIM zones, Malaysia only). false hides them. -->
+    <bool name="show_prayer_times">false</bool>
     <!-- The Live TV row at the bottom of the Inputs menu. false leaves only the HDMI and AV inputs. -->
     <bool name="show_live_tv">true</bool>
     <!-- Grid rows left visible under the dock on the home screen. 0 = dock sits at the very bottom. -->
