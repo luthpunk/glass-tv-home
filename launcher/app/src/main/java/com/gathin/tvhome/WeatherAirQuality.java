@@ -168,7 +168,7 @@ final class WeatherAirQuality {
 
                 // 1. Fetch Complete Weather Forecast (Open-Meteo)
                 String weatherUrl = String.format(Locale.ROOT,
-                        "https://api.open-meteo.com/v1/forecast?latitude=%.4f&longitude=%.4f&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&hourly=temperature_2m,precipitation_probability,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset,uv_index_max&timezone=Asia%%2FKuala_Lumpur&forecast_days=7",
+                        "https://api.open-meteo.com/v1/forecast?latitude=%.4f&longitude=%.4f&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&hourly=temperature_2m,precipitation_probability,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset,uv_index_max&timezone=auto&forecast_days=7",
                         lat, lon);
                 JSONObject wJson = fetchJson(weatherUrl);
 
@@ -182,11 +182,11 @@ final class WeatherAirQuality {
 
                 // 2. Fetch Official Air Quality from Jabatan Alam Sekitar Malaysia (APIMS)
                 String jasUrl = "https://eqms.doe.gov.my/api3/publicportalapims/currentapicurrentlocation?stationid=" + stationId;
-                JSONObject jasJson = fetchJson(jasUrl);
+                JSONObject jasJson = stationId.startsWith("CA") ? fetchJson(jasUrl) : null;
 
-                boolean isMalay = Locale.getDefault().getLanguage().startsWith("ms");
+                boolean isMalay = true;
                 int aqi = 50;
-                String aqiStatus = "Moderate";
+                String aqiStatus = "Sedang";
                 String aqiParam = "PM2.5";
                 String aqiPlace = defaultPlace;
                 String aqiDateTime = "";
@@ -257,16 +257,13 @@ final class WeatherAirQuality {
         int code = prefs.getInt(KEY_CODE, 2);
         int aqi = prefs.getInt(KEY_AQI, 50);
 
-        boolean isMalay = Locale.getDefault().getLanguage().startsWith("ms");
+        boolean isMalay = true;
 
         String icon = getWeatherIcon(code);
         String condition = getWeatherCondition(code, isMalay);
 
         String aqiStatus = prefs.getString(KEY_AQI_STATUS, getAqiStatus(aqi, isMalay));
-        // Translate status if Malay
-        if (isMalay) {
-            aqiStatus = translateAqiStatus(aqiStatus);
-        }
+        aqiStatus = translateAqiStatus(aqiStatus);
         int aqiColor = getAqiColor(aqi);
 
         SpannableStringBuilder sb = new SpannableStringBuilder();
@@ -282,9 +279,9 @@ final class WeatherAirQuality {
         sb.append("  •  ");
         sb.setSpan(new ForegroundColorSpan(0x80FFFFFF), startDot, sb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-        // Air Quality: "IPU 112 Tidak Sihat"
+        // Air Quality: "AQI 112 Tidak Sehat"
         int startAqi = sb.length();
-        String prefix = isMalay ? "IPU " : "API ";
+        String prefix = "AQI ";
         sb.append(prefix).append(String.valueOf(aqi)).append(" ").append(aqiStatus);
         sb.setSpan(new ForegroundColorSpan(aqiColor), startAqi, sb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         sb.setSpan(new StyleSpan(Typeface.BOLD), startAqi, sb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -409,7 +406,7 @@ final class WeatherAirQuality {
         // Air Quality
         int aqi = prefs.getInt(KEY_AQI, 50);
         boolean isJas = prefs.getBoolean(KEY_AQI_IS_JAS, true);
-        String aqiStatus = prefs.getString(KEY_AQI_STATUS, "Sederhana");
+        String aqiStatus = prefs.getString(KEY_AQI_STATUS, "Sedang");
         String aqiParam = prefs.getString(KEY_AQI_PARAM, "PM2.5");
         String stationPlace = prefs.getString(KEY_AQI_STATION_PLACE, AppLocationManager.getStationPlace(context));
         String stationId = AppLocationManager.getStationId(context);
@@ -418,10 +415,8 @@ final class WeatherAirQuality {
         double pm25 = aqi * 0.45;
         double pm10 = aqi * 0.55;
 
-        boolean isMalay = Locale.getDefault().getLanguage().startsWith("ms");
-        if (isMalay) {
-            aqiStatus = translateAqiStatus(aqiStatus);
-        }
+        boolean isMalay = true;
+        aqiStatus = translateAqiStatus(aqiStatus);
         int aqiColor = getAqiColor(aqi);
 
         SimpleDateFormat sdf = new SimpleDateFormat("h:mm a", Locale.getDefault());
@@ -434,12 +429,12 @@ final class WeatherAirQuality {
     }
 
     private static String translateAqiStatus(String status) {
-        if (status == null) return "Sederhana";
+        if (status == null) return "Sedang";
         String s = status.toLowerCase(Locale.ROOT);
         if (s.contains("good") || s.contains("baik")) return "Baik";
-        if (s.contains("moderate") || s.contains("sederhana")) return "Sederhana";
-        if (s.contains("very unhealthy") || s.contains("sangat")) return "Sangat Tidak Sihat";
-        if (s.contains("unhealthy") || s.contains("tidak sihat")) return "Tidak Sihat";
+        if (s.contains("moderate") || s.contains("sederhana") || s.contains("sedang")) return "Sedang";
+        if (s.contains("very unhealthy") || s.contains("sangat")) return "Sangat Tidak Sehat";
+        if (s.contains("unhealthy") || s.contains("tidak sihat") || s.contains("tidak sehat")) return "Tidak Sehat";
         if (s.contains("hazardous") || s.contains("bahaya")) return "Berbahaya";
         return status;
     }
@@ -484,16 +479,16 @@ final class WeatherAirQuality {
                 return isMalay ? "Cerah" : "Clear sky";
             case 1:
             case 2:
-                return isMalay ? "Sebahagian Cerah" : "Partly cloudy";
+                return isMalay ? "Cerah Berawan" : "Partly cloudy";
             case 3:
-                return isMalay ? "Mendung" : "Overcast";
+                return isMalay ? "Berawan" : "Overcast";
             case 45:
             case 48:
-                return isMalay ? "Berkabus / Jerebu" : "Fog / Haze";
+                return isMalay ? "Berkabut" : "Fog / Haze";
             case 51:
             case 53:
             case 55:
-                return isMalay ? "Hujan Renyai" : "Light drizzle";
+                return isMalay ? "Gerimis" : "Light drizzle";
             case 61:
             case 63:
             case 65:
@@ -505,7 +500,7 @@ final class WeatherAirQuality {
             case 95:
             case 96:
             case 99:
-                return isMalay ? "Ribut Petir" : "Thunderstorm";
+                return isMalay ? "Badai Petir" : "Thunderstorm";
             default:
                 return isMalay ? "Cerah" : "Fair";
         }
@@ -546,9 +541,9 @@ final class WeatherAirQuality {
 
     private static String getAqiStatus(int aqi, boolean isMalay) {
         if (aqi <= 50) return isMalay ? "Baik" : "Good";
-        if (aqi <= 100) return isMalay ? "Sederhana" : "Moderate";
-        if (aqi <= 200) return isMalay ? "Tidak Sihat" : "Unhealthy";
-        if (aqi <= 300) return isMalay ? "Sangat Tidak Sihat" : "Very Unhealthy";
+        if (aqi <= 100) return isMalay ? "Sedang" : "Moderate";
+        if (aqi <= 200) return isMalay ? "Tidak Sehat" : "Unhealthy";
+        if (aqi <= 300) return isMalay ? "Sangat Tidak Sehat" : "Very Unhealthy";
         return isMalay ? "Berbahaya" : "Hazardous";
     }
 

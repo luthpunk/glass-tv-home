@@ -94,7 +94,7 @@ public final class AppUpdateManager {
         if (activity == null || activity.isFinishing()) return;
 
         if (manualCheck) {
-            Toast.makeText(activity, "🔄 Menyemak kemas kini terkini...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "🔄 Memeriksa pembaruan terbaru...", Toast.LENGTH_SHORT).show();
         }
 
         executor.execute(() -> {
@@ -109,7 +109,7 @@ public final class AppUpdateManager {
                 int responseCode = conn.getResponseCode();
                 if (responseCode != HttpURLConnection.HTTP_OK) {
                     if (manualCheck) {
-                        mainHandler.post(() -> Toast.makeText(activity, "❌ Gagal menyemak pelayan kemas kini (HTTP " + responseCode + ")", Toast.LENGTH_SHORT).show());
+                        mainHandler.post(() -> Toast.makeText(activity, "❌ Gagal memeriksa server pembaruan (HTTP " + responseCode + ")", Toast.LENGTH_SHORT).show());
                     }
                     return;
                 }
@@ -127,7 +127,7 @@ public final class AppUpdateManager {
                 int remoteVersionCode = json.optInt("versionCode", 0);
                 String remoteVersionName = json.optString("versionName", "");
                 String apkUrl = json.optString("apkUrl", "");
-                String changelog = json.optString("changelog", "Penambahbaikan prestasi dan kestabilan.");
+                String changelog = json.optString("changelog", "Peningkatan performa dan stabilitas.");
 
                 PackageManager pm = activity.getPackageManager();
                 PackageInfo pInfo = pm.getPackageInfo(activity.getPackageName(), 0);
@@ -145,7 +145,7 @@ public final class AppUpdateManager {
                         showUpdateDialog(activity, remoteVersionName, currentVersionName, changelog, apkUrl);
                     } else {
                         if (manualCheck) {
-                            Toast.makeText(activity, "✅ Glass TV Home sudah di versi terkini (v" + currentVersionName + ")!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(activity, "✅ Glass TV Home sudah versi terbaru (v" + currentVersionName + ")!", Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -153,7 +153,7 @@ public final class AppUpdateManager {
             } catch (Exception e) {
                 Log.e(TAG, "Error checking updates: " + e.getMessage());
                 if (manualCheck) {
-                    mainHandler.post(() -> Toast.makeText(activity, "❌ Ralat menyemak kemas kini. Sila pastikan Wi-Fi bersambung.", Toast.LENGTH_SHORT).show());
+                    mainHandler.post(() -> Toast.makeText(activity, "❌ Gagal memeriksa pembaruan. Pastikan Wi-Fi terhubung.", Toast.LENGTH_SHORT).show());
                 }
             }
         });
@@ -161,20 +161,20 @@ public final class AppUpdateManager {
 
     private static void showUpdateDialog(Activity activity, String newVersionName, String currentVersionName, String changelog, String apkUrl) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.Theme_TvHome_GlassDialog);
-        builder.setTitle("🚀 Kemas Kini Baharu Ditemui (v" + newVersionName + ")");
+        builder.setTitle("🚀 Pembaruan Baru Tersedia (v" + newVersionName + ")");
         
-        String message = "Versi Semasa: v" + currentVersionName + "\n"
-                + "Versi Terkini: v" + newVersionName + "\n\n"
-                + "📋 Nota Pembaharuan:\n" + changelog + "\n\n"
-                + "Adakah anda ingin memuat turun dan memasang sekarang?";
+        String message = "Versi Saat Ini: v" + currentVersionName + "\n"
+                + "Versi Terbaru: v" + newVersionName + "\n\n"
+                + "📋 Catatan Pembaruan:\n" + changelog + "\n\n"
+                + "Apakah Anda ingin mengunduh dan memasangnya sekarang?";
         builder.setMessage(message);
 
-        builder.setPositiveButton("Muat Turun & Pasang", (dialog, which) -> {
+        builder.setPositiveButton("Unduh & Pasang", (dialog, which) -> {
             dialog.dismiss();
             downloadAndInstallApk(activity, apkUrl, newVersionName);
         });
 
-        builder.setNegativeButton("Nanti Sahaja", (dialog, which) -> dialog.dismiss());
+        builder.setNegativeButton("Nanti Saja", (dialog, which) -> dialog.dismiss());
         AlertDialog dialog = builder.create();
         dialog.show();
     }
@@ -185,15 +185,15 @@ public final class AppUpdateManager {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             if (!activity.getPackageManager().canRequestPackageInstalls()) {
                 AlertDialog.Builder permDialog = new AlertDialog.Builder(activity, R.style.Theme_TvHome_GlassDialog);
-                permDialog.setTitle("⚠️ Kebenaran Pemasangan Diperlukan");
-                permDialog.setMessage("Sila aktifkan 'Allow from this source' untuk membenarkan Glass TV Home memasang kemas kini automatik.");
-                permDialog.setPositiveButton("Buka Tetapan", (d, w) -> {
+                permDialog.setTitle("⚠️ Izin Pemasangan Diperlukan");
+                permDialog.setMessage("Aktifkan 'Allow from this source' untuk mengizinkan Glass TV Home memasang pembaruan otomatis.");
+                permDialog.setPositiveButton("Buka Pengaturan", (d, w) -> {
                     try {
                         Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
                                 Uri.parse("package:" + activity.getPackageName()));
                         activity.startActivity(intent);
                     } catch (Exception e) {
-                        Toast.makeText(activity, "Buka Tetapan > Keselamatan > Install Unknown Apps", Toast.LENGTH_LONG).show();
+                        Toast.makeText(activity, "Buka Pengaturan > Keamanan > Install Unknown Apps", Toast.LENGTH_LONG).show();
                     }
                 });
                 permDialog.setNegativeButton("Batal", (d, w) -> d.dismiss());
@@ -203,8 +203,8 @@ public final class AppUpdateManager {
         }
 
         ProgressDialog progressDialog = new ProgressDialog(activity, R.style.Theme_TvHome_GlassDialog);
-        progressDialog.setTitle("📥 Memuat Turun Kemas Kini (v" + versionName + ")");
-        progressDialog.setMessage("Sedang memuat turun fail pemasangan...");
+        progressDialog.setTitle("📥 Mengunduh Pembaruan (v" + versionName + ")");
+        progressDialog.setMessage("Sedang mengunduh file pemasangan...");
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.setIndeterminate(false);
         progressDialog.setMax(100);
@@ -259,7 +259,7 @@ public final class AppUpdateManager {
                     if (progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    Toast.makeText(activity, "❌ Ralat memuat turun kemas kini: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(activity, "❌ Gagal mengunduh pembaruan: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
             } finally {
                 try {
@@ -274,7 +274,7 @@ public final class AppUpdateManager {
 
     private static void installApk(Activity activity, File apkFile) {
         if (!apkFile.exists()) {
-            Toast.makeText(activity, "Fail APK kemas kini tidak dijumpai.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "File APK pembaruan tidak ditemukan.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -287,7 +287,7 @@ public final class AppUpdateManager {
             activity.startActivity(intent);
         } catch (Exception e) {
             Log.e(TAG, "Install error: " + e.getMessage());
-            Toast.makeText(activity, "❌ Gagal memulakan pemasangan: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(activity, "❌ Gagal memulai pemasangan: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 }

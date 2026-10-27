@@ -25,7 +25,7 @@ final class HomeWeather {
     /** Malaysian API bands, with DOE's colours: blue, green, yellow, orange, red. */
     private static final int[] API_TOP = {50, 100, 200, 300, 9999};
     static final int[] API_COLOR = {0xFF3D8BFF, 0xFF34C759, 0xFFFFD60A, 0xFFFF9F0A, 0xFFFF453A};
-    private static final String[] API_NAME = {"Good", "Moderate", "Unhealthy", "Very unhealthy", "Hazardous"};
+    private static final String[] API_NAME = {"Baik", "Sedang", "Tidak Sehat", "Sangat Tidak Sehat", "Berbahaya"};
 
     /** What the line says: the weather part, the API part and its colour; either part may be empty. */
     static final class Line {
@@ -71,7 +71,7 @@ final class HomeWeather {
         boolean day = true;
         try {
             JSONObject now = new JSONObject(get("https://api.open-meteo.com/v1/forecast?latitude=" + lat + "&longitude=" + lon
-                    + "&current=temperature_2m,weather_code,is_day&timezone=Asia%2FKuala_Lumpur")).getJSONObject("current");
+                    + "&current=temperature_2m,weather_code,is_day&timezone=auto")).getJSONObject("current");
             code = now.optInt("weather_code");
             day = now.optInt("is_day", 1) == 1;
             weather = Math.round(now.optDouble("temperature_2m")) + "°  " + describe(code);
@@ -114,15 +114,15 @@ final class HomeWeather {
     }
 
     private static String describe(int code) {
-        if (code == 0) return "Clear";
-        if (code == 1) return "Mainly clear";
-        if (code == 2) return "Partly cloudy";
-        if (code == 3) return "Cloudy";
-        if (code == 45 || code == 48) return "Haze";
-        if (code >= 51 && code <= 57) return "Drizzle";
-        if (code >= 61 && code <= 67) return code >= 65 ? "Heavy rain" : "Rain";
-        if (code >= 80 && code <= 82) return "Showers";
-        if (code >= 95) return "Thunderstorm";
+        if (code == 0) return "Cerah";
+        if (code == 1) return "Cerah";
+        if (code == 2) return "Cerah Berawan";
+        if (code == 3) return "Berawan";
+        if (code == 45 || code == 48) return "Berkabut";
+        if (code >= 51 && code <= 57) return "Gerimis";
+        if (code >= 61 && code <= 67) return code >= 65 ? "Hujan Lebat" : "Hujan";
+        if (code >= 80 && code <= 82) return "Hujan Deras";
+        if (code >= 95) return "Badai Petir";
         return "";
     }
 

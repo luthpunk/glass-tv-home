@@ -92,7 +92,8 @@
         android:layout_marginEnd="56dp"
         android:orientation="vertical"
         android:gravity="end"
-        android:alpha="1">
+        android:visibility="gone"
+        android:alpha="0">
 
         <!-- Ayat / Doa Harian (WeeklyAyah) matching bravia-glass-tv UI -->
         <LinearLayout
@@ -571,7 +572,7 @@
                         android:id="@+id/cardSubtitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Now playing • SPOTIFY"
+                        android:text="Sedang diputar • SPOTIFY"
                         android:textColor="#B3FFFFFF"
                         android:textSize="11sp"
                         android:fontFamily="@font/outfit"
@@ -584,7 +585,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
-                        android:text="Song Title"
+                        android:text="Judul Lagu"
                         android:textColor="#FFFFFFFF"
                         android:textSize="15sp"
                         android:fontFamily="@font/outfit"

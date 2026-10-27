@@ -91,7 +91,8 @@
             android:shadowDx="0"
             android:shadowDy="2"
             android:shadowRadius="5"
-            android:includeFontPadding="false" />
+            android:includeFontPadding="false"
+            android:visibility="gone" />
 
         <!-- Next Prayer Time Capsule -->
         <TextView
@@ -113,7 +114,8 @@
             android:shadowDx="0"
             android:shadowDy="1"
             android:shadowRadius="4"
-            android:includeFontPadding="false" />
+            android:includeFontPadding="false"
+            android:visibility="gone" />
 
         <!-- Dim return hint -->
         <TextView
@@ -121,7 +123,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="36dp"
-            android:text="Tekan mana-mana butang untuk kembali"
+            android:text="Tekan tombol apa saja untuk kembali"
             android:textColor="#4DFFFFFF"
             android:textSize="12sp"
             android:fontFamily="@font/outfit"

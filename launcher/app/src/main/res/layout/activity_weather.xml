@@ -49,7 +49,7 @@
                     android:includeFontPadding="false"
                     android:letterSpacing="0.12"
                     android:singleLine="true"
-                    android:text="MY LOCATION"
+                    android:text="LOKASI SAYA"
                     android:textAllCaps="true"
                     android:textColor="#C8DCF8"
                     android:textSize="10sp" />
@@ -67,7 +67,7 @@
                     android:shadowDy="2"
                     android:shadowRadius="6"
                     android:singleLine="true"
-                    android:text="Putrajaya"
+                    android:text="Jakarta"
                     android:textColor="#FFFFFF"
                     android:textSize="20sp" />
 
@@ -138,7 +138,7 @@
                     android:paddingTop="2.5dp"
                     android:paddingEnd="12dp"
                     android:paddingBottom="2.5dp"
-                    android:text="📍 Tukar Stesen / Suasana"
+                    android:text="📍 Ubah Lokasi / Suasana"
                     android:textColor="@color/selector_pill_text"
                     android:textSize="10sp" />
             </LinearLayout>
@@ -185,7 +185,7 @@
                                 android:includeFontPadding="false"
                                 android:letterSpacing="0.08"
                                 android:singleLine="true"
-                                android:text="💨  WIND"
+                                android:text="💨  ANGIN"
                                 android:textColor="#94A3B8"
                                 android:textSize="9sp" />
 
@@ -213,7 +213,7 @@
                                 android:includeFontPadding="false"
                                 android:letterSpacing="0.08"
                                 android:singleLine="true"
-                                android:text="🌕  WANING GIBBOUS"
+                                android:text="🌕  FASE BULAN"
                                 android:textColor="#94A3B8"
                                 android:textSize="9sp" />
 
@@ -250,7 +250,7 @@
                                 android:includeFontPadding="false"
                                 android:letterSpacing="0.08"
                                 android:singleLine="true"
-                                android:text="🌅  SUNSET"
+                                android:text="🌅  TERBENAM"
                                 android:textColor="#94A3B8"
                                 android:textSize="9sp" />
 
@@ -261,7 +261,7 @@
                                 android:fontFamily="@font/outfit"
                                 android:fontVariationSettings="'wght' 700"
                                 android:includeFontPadding="false"
-                                android:text="6:57 PM"
+                                android:text="18:00"
                                 android:textColor="#FFFFFF"
                                 android:textSize="13sp" />
 
@@ -289,7 +289,7 @@
                                 android:includeFontPadding="false"
                                 android:letterSpacing="0.08"
                                 android:singleLine="true"
-                                android:text="☀️  UV INDEX"
+                                android:text="☀️  INDEKS UV"
                                 android:textColor="#94A3B8"
                                 android:textSize="9sp" />
 
@@ -318,7 +318,7 @@
                                     android:fontFamily="@font/outfit"
                                     android:fontVariationSettings="'wght' 600"
                                     android:includeFontPadding="false"
-                                    android:text="High"
+                                    android:text="Tinggi"
                                     android:textColor="#F59E0B"
                                     android:textSize="10sp" />
                             </LinearLayout>
@@ -337,7 +337,7 @@
                                 android:fontVariationSettings="'wght' 400"
                                 android:includeFontPadding="false"
                                 android:singleLine="true"
-                                android:text="Use sun protection until 5PM."
+                                android:text="Gunakan pelindung surya hingga sore."
                                 android:textColor="#CBD5E1"
                                 android:textSize="8sp" />
                         </LinearLayout>
@@ -369,7 +369,7 @@
                                 android:includeFontPadding="false"
                                 android:letterSpacing="0.08"
                                 android:singleLine="true"
-                                android:text="🌡️  FEELS LIKE"
+                                android:text="🌡️  TERASA SEPERTI"
                                 android:textColor="#94A3B8"
                                 android:textSize="9sp" />
 
@@ -393,7 +393,7 @@
                                 android:fontVariationSettings="'wght' 400"
                                 android:includeFontPadding="false"
                                 android:maxLines="2"
-                                android:text="It feels warmer than actual temperature."
+                                android:text="Terasa lebih hangat dari suhu sebenarnya."
                                 android:textColor="#CBD5E1"
                                 android:textSize="8sp" />
                         </LinearLayout>
@@ -416,7 +416,7 @@
                                 android:includeFontPadding="false"
                                 android:letterSpacing="0.08"
                                 android:singleLine="true"
-                                android:text="🍃  AIR QUALITY"
+                                android:text="🍃  KUALITAS UDARA"
                                 android:textColor="#94A3B8"
                                 android:textSize="9sp" />
 
@@ -445,7 +445,7 @@
                                     android:fontFamily="@font/outfit"
                                     android:fontVariationSettings="'wght' 600"
                                     android:includeFontPadding="false"
-                                    android:text="Moderate"
+                                    android:text="Sedang"
                                     android:textColor="#FFFFFF"
                                     android:textSize="10sp" />
                             </LinearLayout>
@@ -466,7 +466,7 @@
                                 android:fontVariationSettings="'wght' 400"
                                 android:includeFontPadding="false"
                                 android:singleLine="true"
-                                android:text="SK Putrajaya Presint 18"
+                                android:text="Monas / Gambir, Jakarta Pusat"
                                 android:textColor="#94A3B8"
                                 android:textSize="8sp" />
                         </LinearLayout>
@@ -497,7 +497,7 @@
                                 android:includeFontPadding="false"
                                 android:letterSpacing="0.08"
                                 android:singleLine="true"
-                                android:text="💧  PRECIPITATION"
+                                android:text="💧  CURAH HUJAN"
                                 android:textColor="#94A3B8"
                                 android:textSize="9sp" />
 
@@ -520,7 +520,7 @@
                                 android:fontVariationSettings="'wght' 400"
                                 android:includeFontPadding="false"
                                 android:singleLine="true"
-                                android:text="in last 24h • 21 mm expected"
+                                android:text="24 jam terakhir"
                                 android:textColor="#CBD5E1"
                                 android:textSize="8sp" />
                         </LinearLayout>
@@ -543,7 +543,7 @@
                                 android:includeFontPadding="false"
                                 android:letterSpacing="0.08"
                                 android:singleLine="true"
-                                android:text="👁️  VISIBILITY"
+                                android:text="👁️  JARAK PANDANG"
                                 android:textColor="#94A3B8"
                                 android:textSize="9sp" />
 
@@ -566,7 +566,7 @@
                                 android:fontVariationSettings="'wght' 400"
                                 android:includeFontPadding="false"
                                 android:singleLine="true"
-                                android:text="Clear view."
+                                android:text="Pandangan cerah."
                                 android:textColor="#CBD5E1"
                                 android:textSize="8sp" />
                         </LinearLayout>
@@ -607,7 +607,7 @@
                                 android:fontFamily="@font/outfit"
                                 android:fontVariationSettings="'wght' 700"
                                 android:includeFontPadding="false"
-                                android:text="Conditions"
+                                android:text="Kondisi Per Jam"
                                 android:textColor="#FFFFFF"
                                 android:textSize="12.5sp" />
 
@@ -618,7 +618,7 @@
                                 android:fontFamily="@font/outfit"
                                 android:fontVariationSettings="'wght' 500"
                                 android:includeFontPadding="false"
-                                android:text="Temperature (°C)"
+                                android:text="Suhu (°C)"
                                 android:textColor="#94A3B8"
                                 android:textSize="10sp" />
 
@@ -720,7 +720,7 @@
                                 android:includeFontPadding="false"
                                 android:letterSpacing="0.08"
                                 android:singleLine="true"
-                                android:text="📅  10-DAY FORECAST"
+                                android:text="📅  PRAKIRAAN 10 HARI"
                                 android:textColor="#94A3B8"
                                 android:textSize="10sp" />
 
@@ -762,7 +762,7 @@
                                     android:includeFontPadding="false"
                                     android:letterSpacing="0.08"
                                     android:singleLine="true"
-                                    android:text="☂  PRECIPITATION"
+                                    android:text="☂  RADAR CUACA"
                                     android:textColor="#94A3B8"
                                     android:textSize="10sp" />
 
@@ -799,7 +799,7 @@
                                         android:includeFontPadding="false"
                                         android:letterSpacing="0.08"
                                         android:singleLine="true"
-                                        android:text="💧  HUMIDITY"
+                                        android:text="💧  KELEMBAPAN"
                                         android:textColor="#94A3B8"
                                         android:textSize="9sp" />
 
@@ -823,7 +823,7 @@
                                         android:fontVariationSettings="'wght' 400"
                                         android:includeFontPadding="false"
                                         android:singleLine="true"
-                                        android:text="The dew point is 25° right now."
+                                        android:text="Titik embun saat ini 25°."
                                         android:textColor="#CBD5E1"
                                         android:textSize="8sp" />
                                 </LinearLayout>
@@ -846,7 +846,7 @@
                                         android:includeFontPadding="false"
                                         android:letterSpacing="0.08"
                                         android:singleLine="true"
-                                        android:text="⏱️  PRESSURE"
+                                        android:text="⏱️  TEKANAN"
                                         android:textColor="#94A3B8"
                                         android:textSize="9sp" />
 
@@ -872,7 +872,7 @@
                 android:gravity="center"
                 android:letterSpacing="0.04"
                 android:singleLine="true"
-                android:text="Jabatan Alam Sekitar (APIMS)  •  Open-Meteo Atmospheric Model"
+                android:text="Open-Meteo Atmospheric &amp; Air Quality Model"
                 android:textColor="#40FFFFFF"
                 android:textSize="9sp" />
         </LinearLayout>
