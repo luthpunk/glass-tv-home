@@ -1,7 +1,7 @@
 {
-  "versionCode": 11,
-  "versionName": "3.2.0-id",
+  "versionCode": 12,
+  "versionName": "3.2.1-id",
   "apkUrl": "https://github.com/luthpunk/glass-tv-home/releases/latest/download/glass-tv-home.apk",
-  "changelog": "chore(release): update OTA version.json to v3.2.0-id and auto-sync in CI",
+  "changelog": "fix: align popup menu right edge with dock/settings button and lock vertical D-pad focus",
   "releaseDate": "2026-10-27"
 }
