@@ -1,7 +1,7 @@
 {
-  "versionCode": 12,
-  "versionName": "3.2.1-id",
+  "versionCode": 13,
+  "versionName": "3.2.2-id",
   "apkUrl": "https://github.com/luthpunk/glass-tv-home/releases/latest/download/glass-tv-home.apk",
-  "changelog": "fix: align popup menu right edge with dock/settings button and lock vertical D-pad focus",
+  "changelog": "feat(weather): add Tuban & East Java cities and set Tuban as default (v3.2.2-id)",
   "releaseDate": "2026-10-27"
 }
