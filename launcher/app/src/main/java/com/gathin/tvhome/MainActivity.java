@@ -381,8 +381,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         if (heroName != null) heroName.setMaxWidth(heroNameMaxWidth);
         if (heroDesc != null) heroDesc.setMaxWidth(heroMaxWidth);
 
-        String activeCat = getSharedPreferences("wallpaper_prefs", MODE_PRIVATE).getString("active_category", "Indonesia");
-        if ("Malaysia".equalsIgnoreCase(activeCat)) activeCat = "Indonesia";
+        String rawCat = getSharedPreferences("wallpaper_prefs", MODE_PRIVATE).getString("active_category", "Indonesia");
+        final String activeCat = "Malaysia".equalsIgnoreCase(rawCat) ? "Indonesia" : rawCat;
         if ("Custom".equalsIgnoreCase(activeCat)) {
             placesMode = false;
             File customDir = new File(getFilesDir(), "custom_wallpapers");
@@ -3397,8 +3397,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         File[] customFiles = customDir.listFiles((dir, name) -> name.endsWith(".jpg") || name.endsWith(".png") || name.endsWith(".jpeg"));
         int customCount = (customFiles != null) ? customFiles.length : 0;
 
-        String currentKey = getSharedPreferences("wallpaper_prefs", MODE_PRIVATE).getString("active_category", "Indonesia");
-        if ("Malaysia".equalsIgnoreCase(currentKey)) currentKey = "Indonesia";
+        String rawKey = getSharedPreferences("wallpaper_prefs", MODE_PRIVATE).getString("active_category", "Indonesia");
+        final String currentKey = "Malaysia".equalsIgnoreCase(rawKey) ? "Indonesia" : rawKey;
 
         class WallpaperOption {
             final String key;
