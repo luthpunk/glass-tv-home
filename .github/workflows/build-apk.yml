@@ -52,7 +52,7 @@ jobs:
           name: glass-tv-home-apk
           path: glass-tv-home.apk
 
-      - name: Publish GitHub release
+      - name: Publish GitHub release & update OTA metadata
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -61,3 +61,28 @@ jobs:
             --title "Glass TV Home ${tag}" \
             --notes "Built from ${GITHUB_SHA::7}. Install: adb install -r glass-tv-home.apk" \
             --latest
+
+          VCODE=$(grep -E "versionCode\s+[0-9]+" launcher/app/build.gradle | awk '{print $2}')
+          VNAME=$(grep -E "versionName\s+" launcher/app/build.gradle | sed -E "s/.*versionName\s+['\"]([^'\"]+)['\"].*/\1/")
+          COMMIT_MSG=$(git log -1 --pretty=%s)
+          DATE_STR=$(date -u +%Y-%m-%d)
+
+          mkdir -p release
+          cp glass-tv-home.apk release/glass-tv-home.apk
+          cat > release/version.json <<EOF
+          {
+            "versionCode": ${VCODE:-11},
+            "versionName": "${VNAME:-3.2.0-id}",
+            "apkUrl": "https://github.com/${GITHUB_REPOSITORY}/releases/latest/download/glass-tv-home.apk",
+            "changelog": "${COMMIT_MSG}",
+            "releaseDate": "${DATE_STR}"
+          }
+          EOF
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add release/version.json release/glass-tv-home.apk
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(release): update OTA version.json to v${VNAME} (${VCODE})"
+            git push origin main
+          fi

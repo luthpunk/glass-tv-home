@@ -1,7 +1,7 @@
 {
-  "versionCode": 8,
-  "versionName": "2.6.0",
-  "apkUrl": "https://github.com/aqmangge/glass-tv-home/raw/main/release/glass-tv-home.apk",
-  "changelog": "🎮 Profil Kesan Bunyi Konsol: PlayStation 5, Nintendo Switch, Xbox Series X/S & Suis Bisu (Off)\n🇲🇾 Koleksi 14 Wallpaper Negeri Malaysia & Sub-Dropdown Pemilih Negeri\n📲 Muat Naik Gambar dari Telefon (QR Code) & Pengurus Foto TV\n🔄 Semakan & Pemasangan Kemas Kini Terus dari TV (OTA Update Checker)",
-  "releaseDate": "2026-10-24"
+  "versionCode": 11,
+  "versionName": "3.2.0-id",
+  "apkUrl": "https://github.com/luthpunk/glass-tv-home/releases/latest/download/glass-tv-home.apk",
+  "changelog": "🇮🇩 Koleksi 16 Wallpaper 4K Pesona Nusantara (Indonesia)\n🌑 Efek Penggelap Wallpaper (Dark Dimming) agar teks & widget kontras\n✨ Teks di atas dock langsung menampilkan judul wallpaper (tanpa kedipan nama aplikasi)\n🧹 Antarmuka Bahasa Indonesia penuh tanpa menu Azan & Doa",
+  "releaseDate": "2026-10-27"
 }
