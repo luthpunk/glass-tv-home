@@ -21,14 +21,15 @@ public class AppLocationManager {
     public static final String KEY_STATION_PLACE = "station_place";
     public static final String KEY_LATITUDE = "latitude";
     public static final String KEY_LONGITUDE = "longitude";
+    private static final String KEY_MIGRATED_TUBAN_DEFAULT = "migrated_tuban_default_v1";
 
-    // Defaults to Indonesia (Jakarta ID01)
+    // Defaults to Tuban, Jawa Timur, Indonesia
     public static final String DEFAULT_REGION = "Indonesia";
-    public static final String DEFAULT_STATION_ID = "ID01";
-    public static final String DEFAULT_LOCATION_NAME = "Jakarta";
-    public static final String DEFAULT_STATION_PLACE = "Monas / Gambir, Jakarta Pusat";
-    public static final double DEFAULT_LATITUDE = -6.2088;
-    public static final double DEFAULT_LONGITUDE = 106.8456;
+    public static final String DEFAULT_STATION_ID = "ID_TUBAN";
+    public static final String DEFAULT_LOCATION_NAME = "Tuban";
+    public static final String DEFAULT_STATION_PLACE = "Alun-Alun Tuban, Jawa Timur";
+    public static final double DEFAULT_LATITUDE = -6.8976;
+    public static final double DEFAULT_LONGITUDE = 112.0649;
 
     public static class Station {
         public final String id;
@@ -61,7 +62,26 @@ public class AppLocationManager {
     private static final List<Station> ALL_STATIONS = new ArrayList<>();
 
     static {
-        // --- 🇲🇾 Malaysia (Default) ---
+        // --- 🇮🇩 Indonesia (Default) ---
+        List<Station> idStations = new ArrayList<>();
+        idStations.add(new Station("ID_TUBAN", "Tuban", "Jawa Timur", "Indonesia", "Alun-Alun Tuban, Jawa Timur", -6.8976, 112.0649));
+        idStations.add(new Station("ID_LMG", "Lamongan", "Jawa Timur", "Indonesia", "Alun-Alun Lamongan, Jawa Timur", -7.1193, 112.4165));
+        idStations.add(new Station("ID_BJN", "Bojonegoro", "Jawa Timur", "Indonesia", "Pusat Kota Bojonegoro, Jawa Timur", -7.1502, 111.8817));
+        idStations.add(new Station("ID_GRS", "Gresik", "Jawa Timur", "Indonesia", "Alun-Alun Gresik, Jawa Timur", -7.1566, 112.6555));
+        idStations.add(new Station("ID02", "Surabaya", "Jawa Timur", "Indonesia", "Pusat Kota Surabaya", -7.2575, 112.7521));
+        idStations.add(new Station("ID_MLG", "Malang", "Jawa Timur", "Indonesia", "Alun-Alun Kota Malang", -7.9826, 112.6308));
+        idStations.add(new Station("ID01", "Jakarta", "DKI Jakarta", "Indonesia", "Monas / Gambir, Jakarta Pusat", -6.2088, 106.8456));
+        idStations.add(new Station("ID03", "Bandung", "Jawa Barat", "Indonesia", "Gedung Sate / Alun-alun", -6.9175, 107.6191));
+        idStations.add(new Station("ID_SMG", "Semarang", "Jawa Tengah", "Indonesia", "Simpang Lima, Semarang", -6.9932, 110.4203));
+        idStations.add(new Station("ID07", "Yogyakarta", "D.I. Yogyakarta", "Indonesia", "Malioboro", -7.7956, 110.3695));
+        idStations.add(new Station("ID05", "Denpasar (Bali)", "Bali", "Indonesia", "Kuta / Denpasar", -8.6705, 115.2126));
+        idStations.add(new Station("ID04", "Medan", "Sumatera Utara", "Indonesia", "Pusat Pasar, Medan", 3.5952, 98.6722));
+        idStations.add(new Station("ID06", "Batam", "Kepulauan Riau", "Indonesia", "Batam Centre", 1.1301, 104.0529));
+        idStations.add(new Station("ID08", "Makassar", "Sulawesi Selatan", "Indonesia", "Pantai Losari", -5.1477, 119.4327));
+        REGION_STATIONS.put("Indonesia", idStations);
+        ALL_STATIONS.addAll(idStations);
+
+        // --- 🇲🇾 Malaysia ---
         List<Station> myStations = new ArrayList<>();
         myStations.add(new Station("CA17W", "Putrajaya", "W.P. Putrajaya", "Malaysia", "SK Putrajaya Presint 18 (2)", 2.9158, 101.6909));
         myStations.add(new Station("CA16W", "Cheras", "W.P. Kuala Lumpur", "Malaysia", "SMK Seri Permaisuri", 3.1063, 101.7179));
@@ -115,19 +135,6 @@ public class AppLocationManager {
         sgStations.add(new Station("SG04", "Woodlands", "North", "Singapore", "Woodlands Civic Centre", 1.4382, 103.7890));
         REGION_STATIONS.put("Singapore", sgStations);
         ALL_STATIONS.addAll(sgStations);
-
-        // --- 🇮🇩 Indonesia ---
-        List<Station> idStations = new ArrayList<>();
-        idStations.add(new Station("ID01", "Jakarta", "DKI Jakarta", "Indonesia", "Monas / Gambir, Jakarta Pusat", -6.2088, 106.8456));
-        idStations.add(new Station("ID02", "Surabaya", "Jawa Timur", "Indonesia", "Pusat Kota Surabaya", -7.2575, 112.7521));
-        idStations.add(new Station("ID03", "Bandung", "Jawa Barat", "Indonesia", "Gedung Sate / Alun-alun", -6.9175, 107.6191));
-        idStations.add(new Station("ID04", "Medan", "Sumatera Utara", "Indonesia", "Pusat Pasar, Medan", 3.5952, 98.6722));
-        idStations.add(new Station("ID05", "Denpasar (Bali)", "Bali", "Indonesia", "Kuta / Denpasar", -8.6705, 115.2126));
-        idStations.add(new Station("ID06", "Batam", "Kepulauan Riau", "Indonesia", "Batam Centre", 1.1301, 104.0529));
-        idStations.add(new Station("ID07", "Yogyakarta", "D.I. Yogyakarta", "Indonesia", "Malioboro", -7.7956, 110.3695));
-        idStations.add(new Station("ID08", "Makassar", "Sulawesi Selatan", "Indonesia", "Pantai Losari", -5.1477, 119.4327));
-        REGION_STATIONS.put("Indonesia", idStations);
-        ALL_STATIONS.addAll(idStations);
 
         // --- 🇧🇳 Brunei Darussalam ---
         List<Station> bnStations = new ArrayList<>();
@@ -207,33 +214,61 @@ public class AppLocationManager {
         return Collections.unmodifiableList(ALL_STATIONS);
     }
 
+    private static void ensureDefaultTubanMigrated(Context context) {
+        if (context == null) return;
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        if (!prefs.getBoolean(KEY_MIGRATED_TUBAN_DEFAULT, false)) {
+            prefs.edit()
+                    .putString(KEY_REGION, DEFAULT_REGION)
+                    .putString(KEY_STATION_ID, DEFAULT_STATION_ID)
+                    .putString(KEY_LOCATION_NAME, DEFAULT_LOCATION_NAME)
+                    .putString(KEY_STATION_PLACE, DEFAULT_STATION_PLACE)
+                    .putString(KEY_LATITUDE, String.valueOf(DEFAULT_LATITUDE))
+                    .putString(KEY_LONGITUDE, String.valueOf(DEFAULT_LONGITUDE))
+                    .putBoolean(KEY_MIGRATED_TUBAN_DEFAULT, true)
+                    .apply();
+
+            SharedPreferences wPrefs = context.getSharedPreferences("weather_aqi_cache", Context.MODE_PRIVATE);
+            wPrefs.edit()
+                    .putLong("last_update", 0L)
+                    .putString("aqi_place", DEFAULT_STATION_PLACE)
+                    .apply();
+        }
+    }
+
     public static String getActiveRegion(Context context) {
+        ensureDefaultTubanMigrated(context);
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getString(KEY_REGION, DEFAULT_REGION);
     }
 
     public static void setActiveRegion(Context context, String region) {
         if (region == null) return;
+        ensureDefaultTubanMigrated(context);
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         prefs.edit().putString(KEY_REGION, region).apply();
     }
 
     public static String getStationId(Context context) {
+        ensureDefaultTubanMigrated(context);
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getString(KEY_STATION_ID, DEFAULT_STATION_ID);
     }
 
     public static String getLocationName(Context context) {
+        ensureDefaultTubanMigrated(context);
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getString(KEY_LOCATION_NAME, DEFAULT_LOCATION_NAME);
     }
 
     public static String getStationPlace(Context context) {
+        ensureDefaultTubanMigrated(context);
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getString(KEY_STATION_PLACE, DEFAULT_STATION_PLACE);
     }
 
     public static double getLatitude(Context context) {
+        ensureDefaultTubanMigrated(context);
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         try {
             return Double.parseDouble(prefs.getString(KEY_LATITUDE, String.valueOf(DEFAULT_LATITUDE)));
@@ -243,6 +278,7 @@ public class AppLocationManager {
     }
 
     public static double getLongitude(Context context) {
+        ensureDefaultTubanMigrated(context);
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         try {
             return Double.parseDouble(prefs.getString(KEY_LONGITUDE, String.valueOf(DEFAULT_LONGITUDE)));

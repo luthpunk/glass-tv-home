@@ -256,12 +256,12 @@ public class WeatherActivity extends Activity {
 
         // 2. Header
         String locDisplay = w.location;
-        String neatLoc = "Jakarta";
+        String neatLoc = "Tuban";
         if (locDisplay != null && !locDisplay.isEmpty()) {
             neatLoc = locDisplay.substring(0, 1).toUpperCase(Locale.ROOT) + locDisplay.substring(1).toLowerCase(Locale.ROOT);
             weatherLocation.setText(neatLoc);
         } else {
-            weatherLocation.setText("Jakarta");
+            weatherLocation.setText("Tuban");
         }
 
         weatherMainTemp.setText(w.temp + "°");
@@ -395,7 +395,7 @@ public class WeatherActivity extends Activity {
             if (w.stationPlace != null && !w.stationPlace.isEmpty()) {
                 aqiStation.setText(w.stationPlace);
             } else {
-                aqiStation.setText("Jakarta Pusat");
+                aqiStation.setText("Alun-Alun Tuban, Jawa Timur");
             }
         }
 
