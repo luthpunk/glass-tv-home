@@ -2,6 +2,6 @@
   "versionCode": 11,
   "versionName": "3.2.0-id",
   "apkUrl": "https://github.com/luthpunk/glass-tv-home/releases/latest/download/glass-tv-home.apk",
-  "changelog": "🇮🇩 Koleksi 16 Wallpaper 4K Pesona Nusantara (Indonesia)\n🌑 Efek Penggelap Wallpaper (Dark Dimming) agar teks & widget kontras\n✨ Teks di atas dock langsung menampilkan judul wallpaper (tanpa kedipan nama aplikasi)\n🧹 Antarmuka Bahasa Indonesia penuh tanpa menu Azan & Doa",
+  "changelog": "chore(release): update OTA version.json to v3.2.0-id and auto-sync in CI",
   "releaseDate": "2026-10-27"
 }
