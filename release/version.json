@@ -1,7 +1,7 @@
 {
-  "versionCode": 13,
-  "versionName": "3.2.2-id",
+  "versionCode": 14,
+  "versionName": "3.2.3-id",
   "apkUrl": "https://github.com/luthpunk/glass-tv-home/releases/latest/download/glass-tv-home.apk",
-  "changelog": "feat(weather): add Tuban & East Java cities and set Tuban as default (v3.2.2-id)",
-  "releaseDate": "2026-10-27"
+  "changelog": "feat(drawer): add 3x3 glass tile & 6x6 Frosted Glass App Drawer replacing stock Aplikasi (v3.2.3-id)",
+  "releaseDate": "2026-10-28"
 }
