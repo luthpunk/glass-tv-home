@@ -1,7 +1,7 @@
 {
-  "versionCode": 14,
-  "versionName": "3.2.3-id",
+  "versionCode": 15,
+  "versionName": "3.2.4-id",
   "apkUrl": "https://github.com/luthpunk/glass-tv-home/releases/latest/download/glass-tv-home.apk",
-  "changelog": "feat(drawer): add 3x3 glass tile & 6x6 Frosted Glass App Drawer replacing stock Aplikasi (v3.2.3-id)",
+  "changelog": "feat(drawer): use 16:9 TV banners in 6x6 Glass App Drawer with square icon fallback (v3.2.4-id)",
   "releaseDate": "2026-10-28"
 }
