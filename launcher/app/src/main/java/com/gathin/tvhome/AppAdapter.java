@@ -239,7 +239,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
                 apps.put(key, built);
                 continue;
             }
-            Drawable banner = loadBanner(pm, ri);
+            Drawable banner = loadBanner(ctx, pm, ri);
             // The icon only shows on a tile without a banner.
             Drawable icon = banner == null ? ri.loadIcon(pm) : null;
             if (card != null) {
@@ -289,7 +289,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
         return true;
     }
 
-    private Drawable loadBanner(PackageManager pm, ResolveInfo ri) {
+    static Drawable loadBanner(Context ctx, PackageManager pm, ResolveInfo ri) {
         int id = ri.activityInfo.banner;
         if (id == 0) id = ri.activityInfo.applicationInfo.banner;
         if (id != 0) {
@@ -301,7 +301,9 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
             } catch (PackageManager.NameNotFoundException | Resources.NotFoundException ignored) {
             }
         }
-        return ri.activityInfo.loadBanner(pm);
+        Drawable d = ri.activityInfo.loadBanner(pm);
+        if (d == null) d = ri.activityInfo.applicationInfo.loadBanner(pm);
+        return d;
     }
 
     @NonNull

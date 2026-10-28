@@ -4770,13 +4770,15 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         final String pkg;
         final ComponentName component;
         final boolean isLeanback;
+        final Drawable banner;
         final Drawable icon;
 
-        DrawerAppItem(String label, String pkg, ComponentName component, boolean isLeanback, Drawable icon) {
+        DrawerAppItem(String label, String pkg, ComponentName component, boolean isLeanback, Drawable banner, Drawable icon) {
             this.label = label;
             this.pkg = pkg;
             this.component = component;
             this.isLeanback = isLeanback;
+            this.banner = banner;
             this.icon = icon;
         }
     }
@@ -4797,8 +4799,9 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                         || hiddenApps.contains(pkg)) continue;
                 ComponentName comp = new ComponentName(pkg, ri.activityInfo.name);
                 String label = Cards.cleanLabel(String.valueOf(ri.loadLabel(pm)), pkg);
-                Drawable icon = ri.loadIcon(pm);
-                byPkg.put(pkg, new DrawerAppItem(label, pkg, comp, true, icon));
+                Drawable banner = AppAdapter.loadBanner(this, pm, ri);
+                Drawable icon = banner == null ? ri.loadIcon(pm) : null;
+                byPkg.put(pkg, new DrawerAppItem(label, pkg, comp, true, banner, icon));
             }
         }
 
@@ -4812,8 +4815,9 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                         || hiddenApps.contains(pkg) || byPkg.containsKey(pkg)) continue;
                 ComponentName comp = new ComponentName(pkg, ri.activityInfo.name);
                 String label = Cards.cleanLabel(String.valueOf(ri.loadLabel(pm)), pkg);
-                Drawable icon = ri.loadIcon(pm);
-                byPkg.put(pkg, new DrawerAppItem(label, pkg, comp, false, icon));
+                Drawable banner = AppAdapter.loadBanner(this, pm, ri);
+                Drawable icon = banner == null ? ri.loadIcon(pm) : null;
+                byPkg.put(pkg, new DrawerAppItem(label, pkg, comp, false, banner, icon));
             }
         }
 
@@ -4826,16 +4830,16 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         overlay.setFocusable(false);
         overlay.setOnClickListener(v -> closeAppDrawer(true));
 
-        int maxW = Math.min(Math.round(820 * density), root.getWidth() - Math.round(96 * density));
-        int maxH = Math.min(Math.round(488 * density), root.getHeight() - Math.round(72 * density));
+        int maxW = Math.min(Math.round(860 * density), root.getWidth() - Math.round(72 * density));
+        int maxH = Math.min(Math.round(496 * density), root.getHeight() - Math.round(64 * density));
 
         LinearLayout panel = new LinearLayout(this);
         panel.setOrientation(LinearLayout.VERTICAL);
         panel.setClickable(true);
         panel.setClipChildren(false);
         panel.setClipToPadding(false);
-        int padH = Math.round(24 * density);
-        int padV = Math.round(18 * density);
+        int padH = Math.round(22 * density);
+        int padV = Math.round(16 * density);
         panel.setPadding(padH, padV, padH, padV);
 
         GlassDrawable glassBg = new GlassDrawable(panel, 26 * density, density, null, 0.45f);
@@ -4896,6 +4900,12 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         final int total = appList.size();
         int rowCount = (total + COLS - 1) / COLS;
 
+        int cellMargin = Math.round(5 * density);
+        int innerW = maxW - (padH * 2) - (gridPad * 2);
+        int cardW = Math.max(Math.round(80 * density), (innerW / COLS) - (cellMargin * 2));
+        int cardH = Math.round(cardW * 101f / 180f);
+        final float cardRadius = 11f * density;
+
         for (int r = 0; r < rowCount; r++) {
             LinearLayout rowLayout = new LinearLayout(this);
             rowLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -4905,11 +4915,10 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
 
             for (int c = 0; c < COLS; c++) {
                 int idx = r * COLS + c;
-                int margin = Math.round(5 * density);
                 if (idx >= total) {
                     View spacer = new View(this);
                     LinearLayout.LayoutParams spLp = new LinearLayout.LayoutParams(0, 1, 1f);
-                    spLp.setMargins(margin, margin, margin, margin);
+                    spLp.setMargins(cellMargin, cellMargin, cellMargin, cellMargin);
                     rowLayout.addView(spacer, spLp);
                     continue;
                 }
@@ -4917,36 +4926,59 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                 final DrawerAppItem item = appList.get(idx);
                 LinearLayout cell = new LinearLayout(this);
                 cell.setOrientation(LinearLayout.VERTICAL);
-                cell.setGravity(Gravity.CENTER);
+                cell.setGravity(Gravity.CENTER_HORIZONTAL);
                 cell.setFocusable(true);
                 cell.setClickable(true);
                 cell.setLongClickable(true);
-                int cellPadH = Math.round(6 * density);
-                int cellPadV = Math.round(10 * density);
-                cell.setPadding(cellPadH, cellPadV, cellPadH, cellPadV);
+                cell.setClipChildren(false);
+                cell.setClipToPadding(false);
 
-                GradientDrawable unfocusedBg = new GradientDrawable();
-                unfocusedBg.setColor(0x18FFFFFF);
-                unfocusedBg.setCornerRadius(14 * density);
-                unfocusedBg.setStroke(Math.max(1, Math.round(1 * density)), 0x30FFFFFF);
+                FrameLayout cardBox = new FrameLayout(this);
+                cardBox.setOutlineProvider(new android.view.ViewOutlineProvider() {
+                    @Override
+                    public void getOutline(View view, android.graphics.Outline outline) {
+                        outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), cardRadius);
+                    }
+                });
+                cardBox.setClipToOutline(true);
 
-                GradientDrawable focusedBg = new GradientDrawable();
-                focusedBg.setColor(0xF2FFFFFF);
-                focusedBg.setCornerRadius(14 * density);
-                focusedBg.setStroke(Math.max(1, Math.round(1.5f * density)), 0xFFFFFFFF);
+                GradientDrawable cardBaseBg = new GradientDrawable();
+                cardBaseBg.setColor(0x22FFFFFF);
+                cardBaseBg.setCornerRadius(cardRadius);
+                cardBaseBg.setStroke(Math.max(1, Math.round(1 * density)), 0x30FFFFFF);
+                cardBox.setBackground(cardBaseBg);
 
-                cell.setBackground(unfocusedBg);
+                if (item.banner != null) {
+                    ImageView bannerView = new ImageView(this);
+                    bannerView.setImageDrawable(item.banner);
+                    bannerView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    cardBox.addView(bannerView, new FrameLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                } else {
+                    ImageView iconView = new ImageView(this);
+                    iconView.setImageDrawable(item.icon);
+                    iconView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                    int iconSize = Math.round(cardH * 0.64f);
+                    FrameLayout.LayoutParams iconLp = new FrameLayout.LayoutParams(iconSize, iconSize, Gravity.CENTER);
+                    cardBox.addView(iconView, iconLp);
+                }
 
-                ImageView iconView = new ImageView(this);
-                iconView.setImageDrawable(item.icon);
-                iconView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                int iconSize = Math.round(44 * density);
-                cell.addView(iconView, new LinearLayout.LayoutParams(iconSize, iconSize));
+                View focusRim = new View(this);
+                GradientDrawable rimDrawable = new GradientDrawable();
+                rimDrawable.setColor(0x00000000);
+                rimDrawable.setCornerRadius(cardRadius);
+                rimDrawable.setStroke(Math.max(2, Math.round(2.2f * density)), 0xFFFFFFFF);
+                focusRim.setBackground(rimDrawable);
+                focusRim.setAlpha(0f);
+                cardBox.addView(focusRim, new FrameLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+                cell.addView(cardBox, new LinearLayout.LayoutParams(cardW, cardH));
 
                 TextView nameView = new TextView(this);
                 nameView.setText(item.label);
                 nameView.setTextSize(11.5f);
-                nameView.setTextColor(0xFFFFFFFF);
+                nameView.setTextColor(0xB3FFFFFF);
                 nameView.setTypeface(getResources().getFont(R.font.outfit), Typeface.BOLD);
                 nameView.setFontVariationSettings("'wght' 650");
                 nameView.setSingleLine(true);
@@ -4954,18 +4986,17 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                 nameView.setGravity(Gravity.CENTER);
                 nameView.setShadowLayer(2 * density, 0, 1 * density, 0xAA000000);
                 LinearLayout.LayoutParams nameLp = new LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                nameLp.topMargin = Math.round(6 * density);
+                        cardW, ViewGroup.LayoutParams.WRAP_CONTENT);
+                nameLp.topMargin = Math.round(5 * density);
                 cell.addView(nameView, nameLp);
 
                 cell.setOnFocusChangeListener((v, hasFocus) -> {
                     if (hasFocus) SoundEffects.playNav();
-                    v.setBackground(hasFocus ? focusedBg : unfocusedBg);
-                    nameView.setTextColor(hasFocus ? 0xFF0F172A : 0xFFFFFFFF);
-                    nameView.setShadowLayer(hasFocus ? 0 : 2 * density, 0, 1 * density, hasFocus ? 0 : 0xAA000000);
+                    focusRim.animate().alpha(hasFocus ? 1f : 0f).setDuration(140).start();
+                    nameView.setTextColor(hasFocus ? 0xFFFFFFFF : 0xB3FFFFFF);
                     float s = hasFocus ? 1.08f : 1.0f;
-                    v.animate().scaleX(s).scaleY(s).translationZ(hasFocus ? 8 * density : 0f)
-                            .setDuration(150).setInterpolator(new android.view.animation.DecelerateInterpolator()).start();
+                    cardBox.animate().scaleX(s).scaleY(s).translationZ(hasFocus ? 8 * density : 0f)
+                            .setDuration(160).setInterpolator(new android.view.animation.DecelerateInterpolator()).start();
                 });
 
                 cell.setOnClickListener(v -> {
@@ -5037,7 +5068,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                 });
 
                 LinearLayout.LayoutParams cellLp = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
-                cellLp.setMargins(margin, margin, margin, margin);
+                cellLp.setMargins(cellMargin, cellMargin, cellMargin, cellMargin);
                 rowLayout.addView(cell, cellLp);
                 cells.add(cell);
             }
