@@ -1145,6 +1145,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         // Single home pressed on Home
         if (cardPrompt != null) cardPrompt.dismiss();
         if (openPopup != null) openPopup.dismiss();
+        closeAppDrawer(false);
         closeMenu(false);
         if (movingPos >= 0) finishMove();
         focusTile(0);
@@ -1283,6 +1284,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         // Nothing of ours stays on screen over another app; an undecided prompt simply returns next time.
         if (cardPrompt != null) cardPrompt.dismiss();
         if (openPopup != null) openPopup.dismiss();
+        closeAppDrawer(false);
         closeMenu(false);
         finishMove();
     }
@@ -1340,6 +1342,10 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     }
 
     private void handleBackPress() {
+        if (appDrawerOverlay != null) {
+            closeAppDrawer(true);
+            return;
+        }
         if (openMenu != null) {
             closeMenu(true);
             return;
@@ -1970,8 +1976,13 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                 closeMenu(true);
             }, R.drawable.ic_move, getString(R.string.tile_move), -1, () -> startMove(key));
         }
-        addInputRow(rows, () -> closeMenu(false), R.drawable.ic_info, getString(R.string.tile_app_info), -1,
-                () -> adapter.openAppInfo(adapter.positionOf(key)));
+        if (!adapter.isAppDrawer(position)) {
+            addInputRow(rows, () -> closeMenu(false), R.drawable.ic_info, getString(R.string.tile_app_info), -1,
+                    () -> adapter.openAppInfo(adapter.positionOf(key)));
+        } else {
+            addInputRow(rows, () -> closeMenu(false), R.drawable.ic_input, "Buka Semua Aplikasi", -1,
+                    this::showGlassAppDrawer);
+        }
         panel.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         int width = Math.max((int) (190 * density), panel.getMeasuredWidth());
         // Under the app when there is room; over it in the dock, which sits near the bottom.
@@ -2132,6 +2143,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                 }
                 if (cardPrompt != null) cardPrompt.dismiss();
                 if (openPopup != null) openPopup.dismiss();
+                closeAppDrawer(false);
                 closeMenu(false);
                 if (movingPos >= 0) finishMove();
                 focusTile(0);
@@ -4743,6 +4755,339 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             }
         }
         open(new Intent(inputAction).setDataAndType(uri, "vnd.android.cursor.item/channel"));
+    }
+
+    private View appDrawerOverlay;
+    private View appDrawerPanel;
+
+    @Override
+    public void onAppDrawerClicked() {
+        showGlassAppDrawer();
+    }
+
+    private static final class DrawerAppItem {
+        final String label;
+        final String pkg;
+        final ComponentName component;
+        final boolean isLeanback;
+        final Drawable icon;
+
+        DrawerAppItem(String label, String pkg, ComponentName component, boolean isLeanback, Drawable icon) {
+            this.label = label;
+            this.pkg = pkg;
+            this.component = component;
+            this.isLeanback = isLeanback;
+            this.icon = icon;
+        }
+    }
+
+    private void showGlassAppDrawer() {
+        if (appDrawerOverlay != null || isFinishing() || isDestroyed()) return;
+
+        PackageManager pm = getPackageManager();
+        java.util.Map<String, DrawerAppItem> byPkg = new java.util.LinkedHashMap<>();
+
+        Intent lbProbe = new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LEANBACK_LAUNCHER);
+        List< android.content.pm.ResolveInfo > lbList = pm.queryIntentActivities(lbProbe, 0);
+        if (lbList != null) {
+            for (android.content.pm.ResolveInfo ri : lbList) {
+                if (ri.activityInfo == null) continue;
+                String pkg = ri.activityInfo.packageName;
+                if (pkg.equals(getPackageName()) || "com.arvanasoft.aplikasi".equals(pkg)
+                        || hiddenApps.contains(pkg)) continue;
+                ComponentName comp = new ComponentName(pkg, ri.activityInfo.name);
+                String label = Cards.cleanLabel(String.valueOf(ri.loadLabel(pm)), pkg);
+                Drawable icon = ri.loadIcon(pm);
+                byPkg.put(pkg, new DrawerAppItem(label, pkg, comp, true, icon));
+            }
+        }
+
+        Intent phoneProbe = new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER);
+        List< android.content.pm.ResolveInfo > phoneList = pm.queryIntentActivities(phoneProbe, 0);
+        if (phoneList != null) {
+            for (android.content.pm.ResolveInfo ri : phoneList) {
+                if (ri.activityInfo == null) continue;
+                String pkg = ri.activityInfo.packageName;
+                if (pkg.equals(getPackageName()) || "com.arvanasoft.aplikasi".equals(pkg)
+                        || hiddenApps.contains(pkg) || byPkg.containsKey(pkg)) continue;
+                ComponentName comp = new ComponentName(pkg, ri.activityInfo.name);
+                String label = Cards.cleanLabel(String.valueOf(ri.loadLabel(pm)), pkg);
+                Drawable icon = ri.loadIcon(pm);
+                byPkg.put(pkg, new DrawerAppItem(label, pkg, comp, false, icon));
+            }
+        }
+
+        List<DrawerAppItem> appList = new ArrayList<>(byPkg.values());
+        Collections.sort(appList, (a, b) -> a.label.compareToIgnoreCase(b.label));
+
+        FrameLayout overlay = new FrameLayout(this);
+        overlay.setBackgroundColor(0x78050912);
+        overlay.setClickable(true);
+        overlay.setFocusable(false);
+        overlay.setOnClickListener(v -> closeAppDrawer(true));
+
+        int maxW = Math.min(Math.round(820 * density), root.getWidth() - Math.round(96 * density));
+        int maxH = Math.min(Math.round(488 * density), root.getHeight() - Math.round(72 * density));
+
+        LinearLayout panel = new LinearLayout(this);
+        panel.setOrientation(LinearLayout.VERTICAL);
+        panel.setClickable(true);
+        panel.setClipChildren(false);
+        panel.setClipToPadding(false);
+        int padH = Math.round(24 * density);
+        int padV = Math.round(18 * density);
+        panel.setPadding(padH, padV, padH, padV);
+
+        GlassDrawable glassBg = new GlassDrawable(panel, 26 * density, density, null, 0.45f);
+        panel.setBackground(glassBg);
+        Backdrop.watch(panel);
+
+        FrameLayout.LayoutParams panelLp = new FrameLayout.LayoutParams(maxW, maxH, Gravity.CENTER);
+        overlay.addView(panel, panelLp);
+
+        // Header Row
+        LinearLayout header = new LinearLayout(this);
+        header.setOrientation(LinearLayout.HORIZONTAL);
+        header.setGravity(Gravity.CENTER_VERTICAL);
+
+        TextView titleView = new TextView(this);
+        titleView.setText("Semua Aplikasi");
+        titleView.setTextSize(18.5f);
+        titleView.setTextColor(0xFFFFFFFF);
+        titleView.setTypeface(getResources().getFont(R.font.outfit), Typeface.BOLD);
+        titleView.setFontVariationSettings("'wght' 700");
+        titleView.setShadowLayer(4 * density, 0, 1 * density, 0xCC000000);
+        header.addView(titleView, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+
+        TextView subView = new TextView(this);
+        subView.setText(appList.size() + " Aplikasi  •  Tahan OK untuk Info / Uninstall");
+        subView.setTextSize(12f);
+        subView.setTextColor(0xCCFFFFFF);
+        subView.setTypeface(getResources().getFont(R.font.outfit), Typeface.BOLD);
+        subView.setFontVariationSettings("'wght' 600");
+        subView.setShadowLayer(2 * density, 0, 1 * density, 0xAA000000);
+        header.addView(subView);
+
+        panel.addView(header);
+
+        View divider = new View(this);
+        divider.setBackgroundColor(0x24FFFFFF);
+        LinearLayout.LayoutParams divLp = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, Math.max(1, Math.round(1 * density)));
+        divLp.topMargin = Math.round(10 * density);
+        divLp.bottomMargin = Math.round(10 * density);
+        panel.addView(divider, divLp);
+
+        ScrollView scroll = new ScrollView(this);
+        scroll.setVerticalScrollBarEnabled(false);
+        scroll.setOverScrollMode(View.OVER_SCROLL_NEVER);
+        scroll.setClipChildren(false);
+        scroll.setClipToPadding(false);
+
+        LinearLayout gridRows = new LinearLayout(this);
+        gridRows.setOrientation(LinearLayout.VERTICAL);
+        gridRows.setClipChildren(false);
+        gridRows.setClipToPadding(false);
+        int gridPad = Math.round(6 * density);
+        gridRows.setPadding(gridPad, gridPad, gridPad, gridPad);
+
+        final int COLS = 6;
+        final List<View> cells = new ArrayList<>();
+        final int total = appList.size();
+        int rowCount = (total + COLS - 1) / COLS;
+
+        for (int r = 0; r < rowCount; r++) {
+            LinearLayout rowLayout = new LinearLayout(this);
+            rowLayout.setOrientation(LinearLayout.HORIZONTAL);
+            rowLayout.setWeightSum(COLS);
+            rowLayout.setClipChildren(false);
+            rowLayout.setClipToPadding(false);
+
+            for (int c = 0; c < COLS; c++) {
+                int idx = r * COLS + c;
+                int margin = Math.round(5 * density);
+                if (idx >= total) {
+                    View spacer = new View(this);
+                    LinearLayout.LayoutParams spLp = new LinearLayout.LayoutParams(0, 1, 1f);
+                    spLp.setMargins(margin, margin, margin, margin);
+                    rowLayout.addView(spacer, spLp);
+                    continue;
+                }
+
+                final DrawerAppItem item = appList.get(idx);
+                LinearLayout cell = new LinearLayout(this);
+                cell.setOrientation(LinearLayout.VERTICAL);
+                cell.setGravity(Gravity.CENTER);
+                cell.setFocusable(true);
+                cell.setClickable(true);
+                cell.setLongClickable(true);
+                int cellPadH = Math.round(6 * density);
+                int cellPadV = Math.round(10 * density);
+                cell.setPadding(cellPadH, cellPadV, cellPadH, cellPadV);
+
+                GradientDrawable unfocusedBg = new GradientDrawable();
+                unfocusedBg.setColor(0x18FFFFFF);
+                unfocusedBg.setCornerRadius(14 * density);
+                unfocusedBg.setStroke(Math.max(1, Math.round(1 * density)), 0x30FFFFFF);
+
+                GradientDrawable focusedBg = new GradientDrawable();
+                focusedBg.setColor(0xF2FFFFFF);
+                focusedBg.setCornerRadius(14 * density);
+                focusedBg.setStroke(Math.max(1, Math.round(1.5f * density)), 0xFFFFFFFF);
+
+                cell.setBackground(unfocusedBg);
+
+                ImageView iconView = new ImageView(this);
+                iconView.setImageDrawable(item.icon);
+                iconView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                int iconSize = Math.round(44 * density);
+                cell.addView(iconView, new LinearLayout.LayoutParams(iconSize, iconSize));
+
+                TextView nameView = new TextView(this);
+                nameView.setText(item.label);
+                nameView.setTextSize(11.5f);
+                nameView.setTextColor(0xFFFFFFFF);
+                nameView.setTypeface(getResources().getFont(R.font.outfit), Typeface.BOLD);
+                nameView.setFontVariationSettings("'wght' 650");
+                nameView.setSingleLine(true);
+                nameView.setEllipsize(TextUtils.TruncateAt.END);
+                nameView.setGravity(Gravity.CENTER);
+                nameView.setShadowLayer(2 * density, 0, 1 * density, 0xAA000000);
+                LinearLayout.LayoutParams nameLp = new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                nameLp.topMargin = Math.round(6 * density);
+                cell.addView(nameView, nameLp);
+
+                cell.setOnFocusChangeListener((v, hasFocus) -> {
+                    if (hasFocus) SoundEffects.playNav();
+                    v.setBackground(hasFocus ? focusedBg : unfocusedBg);
+                    nameView.setTextColor(hasFocus ? 0xFF0F172A : 0xFFFFFFFF);
+                    nameView.setShadowLayer(hasFocus ? 0 : 2 * density, 0, 1 * density, hasFocus ? 0 : 0xAA000000);
+                    float s = hasFocus ? 1.08f : 1.0f;
+                    v.animate().scaleX(s).scaleY(s).translationZ(hasFocus ? 8 * density : 0f)
+                            .setDuration(150).setInterpolator(new android.view.animation.DecelerateInterpolator()).start();
+                });
+
+                cell.setOnClickListener(v -> {
+                    SoundEffects.playSelect();
+                    closeAppDrawer(false);
+                    try {
+                        RecentAppsManager.recordAppLaunch(MainActivity.this, item.pkg);
+                        Intent launchIntent = new Intent(Intent.ACTION_MAIN)
+                                .addCategory(item.isLeanback ? Intent.CATEGORY_LEANBACK_LAUNCHER : Intent.CATEGORY_LAUNCHER)
+                                .setComponent(item.component)
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+                        startActivity(launchIntent);
+                    } catch (Exception ex) {
+                        Intent fallback = pm.getLaunchIntentForPackage(item.pkg);
+                        if (fallback != null) {
+                            fallback.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(fallback);
+                        } else {
+                            Toast.makeText(MainActivity.this, getString(R.string.cant_open, item.label), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+                cell.setOnLongClickListener(v -> {
+                    SoundEffects.playSelect();
+                    try {
+                        Intent infoIntent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                Uri.parse("package:" + item.pkg));
+                        infoIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(infoIntent);
+                    } catch (Exception ignored) {
+                    }
+                    return true;
+                });
+
+                final int cellIndex = idx;
+                cell.setOnKeyListener((v, keyCode, event) -> {
+                    boolean down = event.getAction() == KeyEvent.ACTION_DOWN;
+                    switch (keyCode) {
+                        case KeyEvent.KEYCODE_DPAD_LEFT:
+                            if (cellIndex % COLS > 0 && down) {
+                                cells.get(cellIndex - 1).requestFocus();
+                            }
+                            return true;
+                        case KeyEvent.KEYCODE_DPAD_RIGHT:
+                            if (cellIndex % COLS < COLS - 1 && cellIndex + 1 < total && down) {
+                                cells.get(cellIndex + 1).requestFocus();
+                            }
+                            return true;
+                        case KeyEvent.KEYCODE_DPAD_UP:
+                            if (cellIndex >= COLS && down) {
+                                cells.get(cellIndex - COLS).requestFocus();
+                            }
+                            return true;
+                        case KeyEvent.KEYCODE_DPAD_DOWN:
+                            int curRow = cellIndex / COLS;
+                            int maxRow = (total - 1) / COLS;
+                            if (curRow < maxRow && down) {
+                                cells.get(Math.min(cellIndex + COLS, total - 1)).requestFocus();
+                            }
+                            return true;
+                        case KeyEvent.KEYCODE_BACK:
+                        case KeyEvent.KEYCODE_ESCAPE:
+                            if (down) closeAppDrawer(true);
+                            return true;
+                        default:
+                            return false;
+                    }
+                });
+
+                LinearLayout.LayoutParams cellLp = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+                cellLp.setMargins(margin, margin, margin, margin);
+                rowLayout.addView(cell, cellLp);
+                cells.add(cell);
+            }
+            gridRows.addView(rowLayout, new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        }
+
+        scroll.addView(gridRows, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        panel.addView(scroll, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f));
+
+        appDrawerOverlay = overlay;
+        appDrawerPanel = panel;
+        root.addView(overlay, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+        overlay.setAlpha(0f);
+        panel.setScaleX(0.94f);
+        panel.setScaleY(0.94f);
+        overlay.animate().alpha(1f).setDuration(200).start();
+        panel.animate().scaleX(1f).scaleY(1f).setDuration(220)
+                .setInterpolator(new android.view.animation.DecelerateInterpolator(1.5f)).start();
+
+        if (!cells.isEmpty()) {
+            cells.get(0).requestFocus();
+            panel.post(() -> {
+                if (appDrawerOverlay == overlay && !cells.isEmpty()) {
+                    cells.get(0).requestFocus();
+                }
+            });
+        }
+    }
+
+    private void closeAppDrawer(boolean restoreFocus) {
+        final View overlay = appDrawerOverlay;
+        final View panel = appDrawerPanel;
+        if (overlay == null) return;
+        appDrawerOverlay = null;
+        appDrawerPanel = null;
+        if (restoreFocus) {
+            SoundEffects.playNav();
+            focusTile(lastFocused);
+        }
+        if (panel != null) {
+            panel.animate().scaleX(0.95f).scaleY(0.95f).setDuration(150).start();
+        }
+        overlay.animate().alpha(0f).setDuration(150).withEndAction(() -> {
+            root.removeView(overlay);
+        }).start();
     }
 
     /** The glass menu while one is open (Inputs, or an app's), and what it opened from. */

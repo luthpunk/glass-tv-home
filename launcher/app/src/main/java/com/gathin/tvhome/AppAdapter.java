@@ -10,8 +10,14 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.LinearGradient;
 import android.graphics.Outline;
+import android.graphics.Paint;
+import android.graphics.RadialGradient;
 import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.Shader;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.Settings;
@@ -55,10 +61,15 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
 
         /** OK was held on a tile. Return false to open the app's info page, as before. */
         boolean onTileHeld(int position, View card);
+
+        /** Opens the built-in 6x6 Glass App Drawer. */
+        void onAppDrawerClicked();
     }
 
+    static final ComponentName APP_DRAWER_COMPONENT = new ComponentName("com.gathin.tvhome", "com.gathin.tvhome.AppDrawer");
+
     static final class Entry {
-        static final int APP = 0, HOME_SETTINGS = 1, CARD = 2;
+        static final int APP = 0, HOME_SETTINGS = 1, CARD = 2, APP_DRAWER = 3;
 
         final int kind;
         final String label;
@@ -145,7 +156,16 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
         // its view being rebound to whatever app now sits in that slot.
         setHasStableIds(true);
         String saved = ctx.getSharedPreferences(ORDER_PREFS, Context.MODE_PRIVATE).getString(ORDER_KEY, "");
-        if (!saved.isEmpty()) arranged.addAll(Arrays.asList(saved.split("\n")));
+        if (!saved.isEmpty()) {
+            String drawerKey = APP_DRAWER_COMPONENT.flattenToShortString();
+            for (String s : saved.split("\n")) {
+                if (s.startsWith("com.arvanasoft.aplikasi/")) {
+                    if (!arranged.contains(drawerKey)) arranged.add(drawerKey);
+                } else {
+                    arranged.add(s);
+                }
+            }
+        }
     }
 
     /**
@@ -233,6 +253,8 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
             }
         }
         builtApps = apps;
+        fresh.add(new Entry(Entry.APP_DRAWER, "Aplikasi", APP_DRAWER_COMPONENT,
+                createGlassAppDrawerBanner(ctx), null, null, 0xFF38BDF8));
         Map<String, Integer> place = new HashMap<>();
         for (int i = 0; i < arranged.size(); i++) place.put(arranged.get(i), i);
         Collections.sort(fresh, (a, b) -> {
@@ -388,9 +410,86 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
         return true;
     }
 
+    private Drawable glassAppDrawerBanner;
+
+    private Drawable createGlassAppDrawerBanner(Context context) {
+        if (glassAppDrawerBanner != null) return glassAppDrawerBanner;
+        int w = 360, h = 202;
+        Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(bmp);
+
+        // 1. Dark Frosted Slate-Glass Card Base
+        Paint bgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        bgPaint.setShader(new LinearGradient(0, 0, w, h,
+                new int[]{0xFF1E293B, 0xFF111827, 0xFF0B111E},
+                new float[]{0f, 0.55f, 1f}, Shader.TileMode.CLAMP));
+        c.drawRect(0, 0, w, h, bgPaint);
+
+        // 2. Soft Ambient Ice-Glass Radial Glow behind the 3x3 grid
+        Paint glowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        glowPaint.setShader(new RadialGradient(w * 0.5f, h * 0.5f, h * 0.68f,
+                new int[]{0x4056CCF2, 0x1A38BDF8, 0x00000000},
+                new float[]{0f, 0.55f, 1f}, Shader.TileMode.CLAMP));
+        c.drawRect(0, 0, w, h, glowPaint);
+
+        // 3. 3x3 Frosted Glass Rounded Squares in the center
+        float cell = 26f;
+        float gap = 9f;
+        float total = cell * 3f + gap * 2f;
+        float startX = (w - total) / 2f;
+        float startY = (h - total) / 2f;
+        float radius = 7.5f;
+
+        Paint shadowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        shadowPaint.setColor(0x45000000);
+
+        Paint fillPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        Paint rimPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        rimPaint.setStyle(Paint.Style.STROKE);
+        rimPaint.setStrokeWidth(1.6f);
+
+        RectF rect = new RectF();
+        RectF shadowRect = new RectF();
+
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 3; col++) {
+                float l = startX + col * (cell + gap);
+                float t = startY + row * (cell + gap);
+                rect.set(l, t, l + cell, t + cell);
+
+                // Drop shadow under each glass square
+                shadowRect.set(l + 1f, t + 2.5f, l + cell + 1f, t + cell + 2.5f);
+                c.drawRoundRect(shadowRect, radius, radius, shadowPaint);
+
+                // Frosted Glass translucent fill with diagonal sheen
+                fillPaint.setShader(new LinearGradient(l, t, l + cell, t + cell,
+                        new int[]{0xD9FFFFFF, 0x8CE2F1FF, 0x5994A3B8},
+                        new float[]{0f, 0.5f, 1f}, Shader.TileMode.CLAMP));
+                c.drawRoundRect(rect, radius, radius, fillPaint);
+
+                // Specular Glass Rim (shining top-left & bottom-right edge)
+                rimPaint.setShader(new LinearGradient(l, t, l + cell, t + cell,
+                        new int[]{0xFFFFFFFF, 0x33FFFFFF, 0xB3FFFFFF},
+                        new float[]{0f, 0.5f, 1f}, Shader.TileMode.CLAMP));
+                c.drawRoundRect(rect, radius, radius, rimPaint);
+            }
+        }
+
+        glassAppDrawerBanner = new BitmapDrawable(context.getResources(), bmp);
+        return glassAppDrawerBanner;
+    }
+
+    boolean isAppDrawer(int position) {
+        return position >= 0 && position < items.size() && items.get(position).kind == Entry.APP_DRAWER;
+    }
+
     /** Opens the tile's activity by explicit component, with no extras: a card can name nothing else. */
     private void launch(Entry e) {
         SoundEffects.playSelect();
+        if (e.kind == Entry.APP_DRAWER) {
+            if (listener != null) listener.onAppDrawerClicked();
+            return;
+        }
         if (e.kind == Entry.HOME_SETTINGS) {
             ctx.startActivity(new Intent(ctx, HomeSettingsActivity.class)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
