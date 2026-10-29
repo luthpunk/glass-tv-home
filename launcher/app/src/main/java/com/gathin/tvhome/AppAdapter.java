@@ -624,29 +624,55 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
 
             final Paint rimPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             rimPaint.setStyle(Paint.Style.STROKE);
-            final float strokePx = 2.5f * density;
+            final float strokePx = 1.5f * density;
             rimPaint.setStrokeWidth(strokePx);
-            rimPaint.setColor(0xF2FFFFFF);
+            final LinearGradient rimShader = new LinearGradient(0f, 0f, 1f, 1f,
+                    new int[]{0xF2FFFFFF, 0xD91C2029, 0xD91C2029, 0xF2FFFFFF},
+                    new float[]{0f, 0.42f, 0.58f, 1f},
+                    Shader.TileMode.CLAMP);
+            rimPaint.setShader(rimShader);
+            final android.graphics.Matrix rimMatrix = new android.graphics.Matrix();
+
+            final Paint innerBevelPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            innerBevelPaint.setStyle(Paint.Style.STROKE);
+            final float bevelPx = 1.0f * density;
+            innerBevelPaint.setStrokeWidth(bevelPx);
+            innerBevelPaint.setColor(0x59000000);
+
             final RectF rimRect = new RectF();
             focusRim.setBackground(new Drawable() {
                 @Override
                 public void draw(@NonNull Canvas canvas) {
                     Rect b = getBounds();
                     if (b.width() <= 0 || b.height() <= 0) return;
+                    float rBase = cornerRadius(b.width(), density);
+
+                    // Subtle inner dark glass bevel for crisp contrast on white banners (e.g. YouTube)
+                    float bevelInset = strokePx + bevelPx * 0.5f;
+                    rimRect.set(b.left + bevelInset, b.top + bevelInset, b.right - bevelInset, b.bottom - bevelInset);
+                    float rBevel = Math.max(0f, rBase - bevelInset);
+                    canvas.drawRoundRect(rimRect, rBevel, rBevel, innerBevelPaint);
+
+                    // 1.5dp Liquid Glass diagonal gradient rim (matches top bar pills)
                     float inset = strokePx * 0.5f;
                     rimRect.set(b.left + inset, b.top + inset, b.right - inset, b.bottom - inset);
-                    float r = Math.max(0f, cornerRadius(b.width(), density) - inset);
+                    rimMatrix.setScale(rimRect.width(), rimRect.height());
+                    rimMatrix.postTranslate(rimRect.left, rimRect.top);
+                    rimShader.setLocalMatrix(rimMatrix);
+                    float r = Math.max(0f, rBase - inset);
                     canvas.drawRoundRect(rimRect, r, r, rimPaint);
                 }
 
                 @Override
                 public void setAlpha(int alpha) {
                     rimPaint.setAlpha(alpha);
+                    innerBevelPaint.setAlpha(Math.round(alpha * (0x59 / 255f)));
                 }
 
                 @Override
                 public void setColorFilter(android.graphics.ColorFilter colorFilter) {
                     rimPaint.setColorFilter(colorFilter);
+                    innerBevelPaint.setColorFilter(colorFilter);
                 }
 
                 @Override

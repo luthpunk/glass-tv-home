@@ -8,11 +8,11 @@
 
 <p align="center">
   <a href="https://github.com/luthpunk/glass-tv-home/releases/latest/download/glass-tv-home.apk">
-    <img src="https://img.shields.io/badge/Download_APK_v3.2.5--id-glass--tv--home.apk-success?style=for-the-badge&logo=android" alt="Download APK Terbaru">
+    <img src="https://img.shields.io/badge/Download_APK_v3.2.6--id-glass--tv--home.apk-success?style=for-the-badge&logo=android" alt="Download APK Terbaru">
   </a>
 </p>
 
-> 📦 **Unduh Langsung APK Terbaru**: Dapatkan rilis terbaru [**`glass-tv-home.apk`**](https://github.com/luthpunk/glass-tv-home/releases/latest/download/glass-tv-home.apk) (**v3.2.5-id**) yang siap dipasang di Android TV, Google TV, maupun STB (seperti ZTE `HG680-FJ` / `B860H`).
+> 📦 **Unduh Langsung APK Terbaru**: Dapatkan rilis terbaru [**`glass-tv-home.apk`**](https://github.com/luthpunk/glass-tv-home/releases/latest/download/glass-tv-home.apk) (**v3.2.6-id**) yang siap dipasang di Android TV, Google TV, maupun STB (seperti ZTE `HG680-FJ` / `B860H`).
 
 ---
 
@@ -20,7 +20,7 @@
 
 ### 1. Desain Apple tvOS Frosted Glass & Tampilan Bersih
 - **Dock Kaca Buram (*Frosted Glass*) di Baris Pertama**: Baris utama aplikasi dibungkus *tray* kaca buram yang mem-blur wallpaper di belakangnya secara *real-time*, sedangkan baris di bawahnya tampil melayang bersih agar tidak menutupi keindahan wallpaper.
-- **Sorotan Mengalir (*Gliding Focus*), Kerangka Putih Tegas & *Ambient Glow***: Sorotan kaca berpindah mulus antar-aplikasi dilengkapi bingkai putih tegas (`2.5dp`) yang mudah terlihat dari jarak jauh, serta pencahayaan latar (*ambient glow*) yang otomatis menyesuaikan warna *banner* aplikasi.
+- **Sorotan Mengalir (*Gliding Focus*), Kerangka *Gradient Glass Rim* & *Ambient Glow***: Sorotan kaca berpindah mulus antar-aplikasi dilengkapi bingkai gradasi diagonal (`1.5dp`) yang kontras baik di banner gelap maupun putih, serta pencahayaan latar (*ambient glow*) yang otomatis menyesuaikan warna *banner* aplikasi.
 - **Peredupan Wallpaper Otomatis (*Dark Dimming*)**: Setiap wallpaper otomatis diberi *tint* gelap (`#6E6E6E`) agar jam, teks lokasi, dan ikon aplikasi selalu kontras dan nyaman di mata.
 - **Antarmuka 100% Bahasa Indonesia & Bebas Menu Azan/Doa**: Seluruh menu, pengaturan, dan status cuaca telah diterjemahkan ke Bahasa Indonesia serta dibersihkan dari fitur/menu jadwal salat, azan, dan doa.
 
