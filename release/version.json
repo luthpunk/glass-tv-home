@@ -1,7 +1,7 @@
 {
-  "versionCode": 15,
-  "versionName": "3.2.4-id",
+  "versionCode": 16,
+  "versionName": "3.2.5-id",
   "apkUrl": "https://github.com/luthpunk/glass-tv-home/releases/latest/download/glass-tv-home.apk",
-  "changelog": "feat(drawer): use 16:9 TV banners in 6x6 Glass App Drawer with square icon fallback (v3.2.4-id)",
-  "releaseDate": "2026-10-28"
+  "changelog": "feat(home): add white focus border on home tiles and remove back-button fullscreen wallpaper toggle (v3.2.5-id)",
+  "releaseDate": "2026-10-29"
 }
