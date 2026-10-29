@@ -1,7 +1,7 @@
 {
-  "versionCode": 16,
-  "versionName": "3.2.5-id",
+  "versionCode": 17,
+  "versionName": "3.2.6-id",
   "apkUrl": "https://github.com/luthpunk/glass-tv-home/releases/latest/download/glass-tv-home.apk",
-  "changelog": "feat(home): add white focus border on home tiles and remove back-button fullscreen wallpaper toggle (v3.2.5-id)",
+  "changelog": "style(home): refine focus border to 1.5dp diagonal gradient glass rim (v3.2.6-id)",
   "releaseDate": "2026-10-29"
 }
