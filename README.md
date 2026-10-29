@@ -16,7 +16,7 @@
 
 ---
 
-## ✨ Fitur Utama (Kondisi Real Saat Ini)
+## ✨ Fitur Utama
 
 ### 1. Desain Apple tvOS Frosted Glass & Tampilan Bersih
 - **Dock Kaca Buram (*Frosted Glass*) di Baris Pertama**: Baris utama aplikasi dibungkus *tray* kaca buram yang mem-blur wallpaper di belakangnya secara *real-time*, sedangkan baris di bawahnya tampil melayang bersih agar tidak menutupi keindahan wallpaper.
