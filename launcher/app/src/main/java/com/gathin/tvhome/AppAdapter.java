@@ -334,6 +334,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
         h.name.setVisibility(position < dockSize ? View.INVISIBLE : View.VISIBLE);   // the dock has no labels
         boolean focused = h.card.isFocused();   // a rebind after reload() can hit the focused tile
         h.name.setAlpha(focused ? 1f : 0f);
+        h.focusRim.setAlpha(focused ? 1f : 0f);
         h.card.setScaleX(focused ? FOCUS_SCALE : 1f);
         h.card.setScaleY(focused ? FOCUS_SCALE : 1f);
         if (e.banner != null) {
@@ -597,6 +598,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
         final ImageView banner;
         final ImageView icon;
         final TextView label;
+        final View focusRim;
         final TextView name;
         final boolean reducedMotion;
 
@@ -606,6 +608,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
             banner = v.findViewById(R.id.banner);
             icon = v.findViewById(R.id.icon);
             label = v.findViewById(R.id.label);
+            focusRim = v.findViewById(R.id.focus_rim);
             name = v.findViewById(R.id.name);
             this.reducedMotion = reducedMotion;
 
@@ -619,6 +622,39 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
             });
             card.setClipToOutline(true);
 
+            final Paint rimPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            rimPaint.setStyle(Paint.Style.STROKE);
+            final float strokePx = 2.5f * density;
+            rimPaint.setStrokeWidth(strokePx);
+            rimPaint.setColor(0xF2FFFFFF);
+            final RectF rimRect = new RectF();
+            focusRim.setBackground(new Drawable() {
+                @Override
+                public void draw(@NonNull Canvas canvas) {
+                    Rect b = getBounds();
+                    if (b.width() <= 0 || b.height() <= 0) return;
+                    float inset = strokePx * 0.5f;
+                    rimRect.set(b.left + inset, b.top + inset, b.right - inset, b.bottom - inset);
+                    float r = Math.max(0f, cornerRadius(b.width(), density) - inset);
+                    canvas.drawRoundRect(rimRect, r, r, rimPaint);
+                }
+
+                @Override
+                public void setAlpha(int alpha) {
+                    rimPaint.setAlpha(alpha);
+                }
+
+                @Override
+                public void setColorFilter(android.graphics.ColorFilter colorFilter) {
+                    rimPaint.setColorFilter(colorFilter);
+                }
+
+                @Override
+                public int getOpacity() {
+                    return android.graphics.PixelFormat.TRANSLUCENT;
+                }
+            });
+
             card.setOnKeyListener((view, keyCode, event) -> {
                 if (event.getAction() != KeyEvent.ACTION_DOWN) return false;
                 if (keyCode != KeyEvent.KEYCODE_DPAD_UP && keyCode != KeyEvent.KEYCODE_DPAD_DOWN
@@ -631,6 +667,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
                 float s = focused ? FOCUS_SCALE : 1.0f;
                 view.animate().cancel();
                 name.animate().cancel();
+                focusRim.animate().cancel();
                 if (reducedMotion) {
                     // No overshoot: the extra frames redraw the banner and the dock band on a weak GPU.
                     view.animate().scaleX(s).scaleY(s)
@@ -639,6 +676,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
                             .withLayer()
                             .start();
                     name.animate().alpha(focused ? 1f : 0f).setDuration(100).start();
+                    focusRim.animate().alpha(focused ? 1f : 0f).setDuration(focused ? 100 : 80).start();
                 } else {
                     view.animate().scaleX(s).scaleY(s)
                             .setDuration(focused ? 260 : 180)
@@ -648,6 +686,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
                     name.animate().alpha(focused ? 1f : 0f)
                             .translationY(focused ? density * 4f : -density * 6f)
                             .setDuration(220).start();
+                    focusRim.animate().alpha(focused ? 1f : 0f).setDuration(focused ? 180 : 140).start();
                 }
                 int pos = getBindingAdapterPosition();
                 if (focused && listener != null && pos != RecyclerView.NO_POSITION) {

@@ -1371,7 +1371,6 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             singleBackRunnable = () -> {
                 doubleBackPending = false;
                 singleBackRunnable = null;
-                setWallpaperFullscreen(true);
             };
             handler.postDelayed(singleBackRunnable, DOUBLE_BACK_DELAY_MS);
         }
