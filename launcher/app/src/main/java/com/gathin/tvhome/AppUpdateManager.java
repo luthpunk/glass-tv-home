@@ -99,7 +99,7 @@ public final class AppUpdateManager {
 
         executor.execute(() -> {
             try {
-                URL url = new URL(VERSION_URL);
+                URL url = new URL(VERSION_URL + "?t=" + System.currentTimeMillis());
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
                 conn.setConnectTimeout(6000);

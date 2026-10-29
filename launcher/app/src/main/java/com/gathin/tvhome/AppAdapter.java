@@ -64,12 +64,16 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
 
         /** Opens the built-in 6x6 Glass App Drawer. */
         void onAppDrawerClicked();
+
+        /** Opens the right-side Glass Add-App sheet. */
+        void onAddAppClicked();
     }
 
     static final ComponentName APP_DRAWER_COMPONENT = new ComponentName("com.gathin.tvhome", "com.gathin.tvhome.AppDrawer");
+    static final ComponentName ADD_APP_COMPONENT = new ComponentName("com.gathin.tvhome", "com.gathin.tvhome.AddApp");
 
     static final class Entry {
-        static final int APP = 0, HOME_SETTINGS = 1, CARD = 2, APP_DRAWER = 3;
+        static final int APP = 0, HOME_SETTINGS = 1, CARD = 2, APP_DRAWER = 3, ADD_APP = 4;
 
         final int kind;
         final String label;
@@ -140,7 +144,10 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
     private final List<Entry> items = new ArrayList<>();
     /** The order someone arranged the tiles in, by key (see {@link #keyAt}); empty until they do. */
     private final List<String> arranged = new ArrayList<>();
-    private static final String ORDER_PREFS = "tiles", ORDER_KEY = "order";
+    private final Set<String> removedApps = new HashSet<>();
+    private final Set<String> addedApps = new HashSet<>();
+    private static final String ORDER_PREFS = "tiles", ORDER_KEY = "order",
+            REMOVED_KEY = "removed_apps", ADDED_KEY = "added_apps";
     /** Rebind payload: only whether the tile's name shows, which depends on being in the dock. */
     private static final Object DOCK_CHANGED = new Object();
 
@@ -155,10 +162,17 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
         // Tiles keep their identity across reload(), so a focused tile stays on its app instead of
         // its view being rebound to whatever app now sits in that slot.
         setHasStableIds(true);
-        String saved = ctx.getSharedPreferences(ORDER_PREFS, Context.MODE_PRIVATE).getString(ORDER_KEY, "");
+        android.content.SharedPreferences prefs = ctx.getSharedPreferences(ORDER_PREFS, Context.MODE_PRIVATE);
+        Set<String> savedRemoved = prefs.getStringSet(REMOVED_KEY, null);
+        if (savedRemoved != null) removedApps.addAll(savedRemoved);
+        Set<String> savedAdded = prefs.getStringSet(ADDED_KEY, null);
+        if (savedAdded != null) addedApps.addAll(savedAdded);
+        String saved = prefs.getString(ORDER_KEY, "");
         if (!saved.isEmpty()) {
             String drawerKey = APP_DRAWER_COMPONENT.flattenToShortString();
+            String addKey = ADD_APP_COMPONENT.flattenToShortString();
             for (String s : saved.split("\n")) {
+                if (s.equals(addKey)) continue;
                 if (s.startsWith("com.arvanasoft.aplikasi/")) {
                     if (!arranged.contains(drawerKey)) arranged.add(drawerKey);
                 } else {
@@ -196,7 +210,9 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
         // entry; take its ordinary launcher activity instead. Apps not named stay hidden.
         Set<String> listed = new HashSet<>();
         for (ResolveInfo ri : found) if (ri.activityInfo != null) listed.add(ri.activityInfo.packageName);
-        for (String pkg : favourites) {
+        Set<String> extraPackages = new HashSet<>(favourites);
+        extraPackages.addAll(addedApps);
+        for (String pkg : extraPackages) {
             if (listed.contains(pkg)) continue;
             Intent phone = new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER).setPackage(pkg);
             List<ResolveInfo> more = pm.queryIntentActivities(phone, 0);
@@ -217,6 +233,8 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
             parts.add('#' + c.pkg + '/' + c.component.flattenToShortString() + '|' + c.label + '|'
                     + c.caption + '|' + c.accent);
         }
+        for (String rPkg : removedApps) parts.add("-" + rPkg);
+        for (String aPkg : addedApps) parts.add("+" + aPkg);
         Collections.sort(parts);
         String signature = android.text.TextUtils.join(";", parts);
         if (signature.equals(builtFrom) && !items.isEmpty()) return false;
@@ -228,18 +246,21 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
         for (ResolveInfo ri : found) {
             if (ri.activityInfo == null) continue;
             String pkg = ri.activityInfo.packageName;
-            if (pkg.equals(ctx.getPackageName()) || hidden.contains(pkg)) continue;
+            if (pkg.equals(ctx.getPackageName()) || hidden.contains(pkg) || removedApps.contains(pkg)) continue;
             ComponentName component = new ComponentName(pkg, ri.activityInfo.name);
             Cards.Card card = cardByPkg.get(pkg);
             if (card != null && !card.component.equals(component)) continue;   // the card stands in for this tile
             String key = component.flattenToShortString() + '@' + ri.activityInfo.applicationInfo.sourceDir;
             Entry built = card == null ? builtApps.get(key) : null;
             if (built != null) {
+                if (built.banner == null && !addedApps.contains(pkg)) continue;
                 fresh.add(built);
                 apps.put(key, built);
                 continue;
             }
             Drawable banner = loadBanner(ctx, pm, ri);
+            // Default home rule: only show apps that have a TV banner, unless manually added via '+'
+            if (banner == null && !addedApps.contains(pkg)) continue;
             // The icon only shows on a tile without a banner.
             Drawable icon = banner == null ? ri.loadIcon(pm) : null;
             if (card != null) {
@@ -283,6 +304,9 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
                     new ComponentName(ctx, HomeSettingsActivity.class), null,
                     ctx.getDrawable(R.drawable.ic_home_settings), null, 0));
         }
+        // Always keep the "+" (Tambah Aplikasi) Glass card at the very end of the home screen
+        fresh.add(new Entry(Entry.ADD_APP, "Tambah Aplikasi", ADD_APP_COMPONENT,
+                createGlassAddAppBanner(ctx), null, null, 0xFF38BDF8));
         items.clear();
         items.addAll(fresh);
         notifyDataSetChanged();
@@ -382,15 +406,19 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
         }
     }
 
-    /** Whether the tile at {@code position} can be moved: every app can, the Default home tile cannot. */
+    /** Whether the tile at {@code position} can be moved: every app can, the Default home and Add App tiles cannot. */
     boolean canMove(int position) {
-        return position >= 0 && position < items.size() && items.get(position).kind != Entry.HOME_SETTINGS;
+        if (position < 0 || position >= items.size()) return false;
+        int kind = items.get(position).kind;
+        return kind != Entry.HOME_SETTINGS && kind != Entry.ADD_APP;
     }
 
-    /** The last position a moved tile can take: before the Default home tile, which stays last. */
+    /** The last position a moved tile can take: before the Default home / Add App tiles, which stay last. */
     int lastMovable() {
         int last = items.size() - 1;
-        while (last >= 0 && items.get(last).kind == Entry.HOME_SETTINGS) last--;
+        while (last >= 0 && (items.get(last).kind == Entry.HOME_SETTINGS || items.get(last).kind == Entry.ADD_APP)) {
+            last--;
+        }
         return last;
     }
 
@@ -407,10 +435,138 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
         int lo = Math.min(from, to), hi = Math.max(from, to);
         if (lo < dockSize && hi >= dockSize) notifyItemRangeChanged(lo, hi - lo + 1, DOCK_CHANGED);
         arranged.clear();
-        for (Entry x : items) if (x.kind != Entry.HOME_SETTINGS) arranged.add(x.component.flattenToShortString());
+        for (Entry x : items) {
+            if (x.kind != Entry.HOME_SETTINGS && x.kind != Entry.ADD_APP) {
+                arranged.add(x.component.flattenToShortString());
+            }
+        }
         ctx.getSharedPreferences(ORDER_PREFS, Context.MODE_PRIVATE).edit()
                 .putString(ORDER_KEY, android.text.TextUtils.join("\n", arranged)).apply();
         return true;
+    }
+
+    boolean isAddApp(int position) {
+        return position >= 0 && position < items.size() && items.get(position).kind == Entry.ADD_APP;
+    }
+
+    boolean canRemove(int position) {
+        if (position < 0 || position >= items.size()) return false;
+        int kind = items.get(position).kind;
+        return kind == Entry.APP || kind == Entry.CARD;
+    }
+
+    boolean isPackageOnHome(String pkg) {
+        for (Entry e : items) {
+            if ((e.kind == Entry.APP || e.kind == Entry.CARD) && e.pkg.equals(pkg)) return true;
+        }
+        return false;
+    }
+
+    String removeAppAt(int position) {
+        if (!canRemove(position)) return null;
+        Entry e = items.get(position);
+        String pkg = e.pkg;
+        String compKey = e.component.flattenToShortString();
+        removedApps.add(pkg);
+        addedApps.remove(pkg);
+        arranged.remove(compKey);
+        ctx.getSharedPreferences(ORDER_PREFS, Context.MODE_PRIVATE).edit()
+                .putStringSet(REMOVED_KEY, new HashSet<>(removedApps))
+                .putStringSet(ADDED_KEY, new HashSet<>(addedApps))
+                .putString(ORDER_KEY, android.text.TextUtils.join("\n", arranged))
+                .apply();
+        builtFrom = null;
+        return e.label;
+    }
+
+    void addPackageToHome(String pkg, String compKey) {
+        if (pkg == null) return;
+        removedApps.remove(pkg);
+        addedApps.add(pkg);
+        if (!arranged.isEmpty() && compKey != null && !arranged.contains(compKey)) {
+            arranged.add(compKey);
+        }
+        ctx.getSharedPreferences(ORDER_PREFS, Context.MODE_PRIVATE).edit()
+                .putStringSet(REMOVED_KEY, new HashSet<>(removedApps))
+                .putStringSet(ADDED_KEY, new HashSet<>(addedApps))
+                .putString(ORDER_KEY, android.text.TextUtils.join("\n", arranged))
+                .apply();
+        builtFrom = null;
+    }
+
+    private Drawable glassAddAppBanner;
+
+    private Drawable createGlassAddAppBanner(Context context) {
+        if (glassAddAppBanner != null) return glassAddAppBanner;
+        int w = 360, h = 202;
+        Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(bmp);
+
+        // 1. Dark Frosted Slate-Glass Card Base
+        Paint bgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        bgPaint.setShader(new LinearGradient(0, 0, w, h,
+                new int[]{0xFF1E293B, 0xFF111827, 0xFF0B111E},
+                new float[]{0f, 0.55f, 1f}, Shader.TileMode.CLAMP));
+        c.drawRect(0, 0, w, h, bgPaint);
+
+        // 2. Soft Ambient Ice-Glass Radial Glow behind the '+' glass badge
+        Paint glowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        glowPaint.setShader(new RadialGradient(w * 0.5f, h * 0.5f, h * 0.65f,
+                new int[]{0x4056CCF2, 0x1A38BDF8, 0x00000000},
+                new float[]{0f, 0.55f, 1f}, Shader.TileMode.CLAMP));
+        c.drawRect(0, 0, w, h, glowPaint);
+
+        // 3. Center Frosted Glass Squircle Container (76x76)
+        float box = 76f;
+        float l = (w - box) / 2f;
+        float t = (h - box) / 2f;
+        float radius = 22f;
+        RectF rect = new RectF(l, t, l + box, t + box);
+        RectF shadowRect = new RectF(l + 1.5f, t + 3.5f, l + box + 1.5f, t + box + 3.5f);
+
+        Paint shadowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        shadowPaint.setColor(0x50000000);
+        c.drawRoundRect(shadowRect, radius, radius, shadowPaint);
+
+        Paint fillPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        fillPaint.setShader(new LinearGradient(l, t, l + box, t + box,
+                new int[]{0x48FFFFFF, 0x26E2F1FF, 0x1894A3B8},
+                new float[]{0f, 0.5f, 1f}, Shader.TileMode.CLAMP));
+        c.drawRoundRect(rect, radius, radius, fillPaint);
+
+        Paint rimPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        rimPaint.setStyle(Paint.Style.STROKE);
+        rimPaint.setStrokeWidth(2.0f);
+        rimPaint.setShader(new LinearGradient(l, t, l + box, t + box,
+                new int[]{0xFFFFFFFF, 0x33FFFFFF, 0xCCFFFFFF},
+                new float[]{0f, 0.5f, 1f}, Shader.TileMode.CLAMP));
+        c.drawRoundRect(rect, radius, radius, rimPaint);
+
+        // 4. Crisp Glass '+' Sign in the center
+        float cx = w * 0.5f;
+        float cy = h * 0.5f;
+        float arm = 16.5f;
+
+        Paint plusShadow = new Paint(Paint.ANTI_ALIAS_FLAG);
+        plusShadow.setStyle(Paint.Style.STROKE);
+        plusShadow.setStrokeWidth(5.5f);
+        plusShadow.setStrokeCap(Paint.Cap.ROUND);
+        plusShadow.setColor(0x55000000);
+        c.drawLine(cx - arm, cy + 2f, cx + arm, cy + 2f, plusShadow);
+        c.drawLine(cx, cy - arm + 2f, cx, cy + arm + 2f, plusShadow);
+
+        Paint plusPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        plusPaint.setStyle(Paint.Style.STROKE);
+        plusPaint.setStrokeWidth(5.5f);
+        plusPaint.setStrokeCap(Paint.Cap.ROUND);
+        plusPaint.setShader(new LinearGradient(cx - arm, cy - arm, cx + arm, cy + arm,
+                new int[]{0xFFFFFFFF, 0xFFDFF4FF},
+                new float[]{0f, 1f}, Shader.TileMode.CLAMP));
+        c.drawLine(cx - arm, cy, cx + arm, cy, plusPaint);
+        c.drawLine(cx, cy - arm, cx, cy + arm, plusPaint);
+
+        glassAddAppBanner = new BitmapDrawable(context.getResources(), bmp);
+        return glassAddAppBanner;
     }
 
     private Drawable glassAppDrawerBanner;
@@ -493,6 +649,10 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
             if (listener != null) listener.onAppDrawerClicked();
             return;
         }
+        if (e.kind == Entry.ADD_APP) {
+            if (listener != null) listener.onAddAppClicked();
+            return;
+        }
         if (e.kind == Entry.HOME_SETTINGS) {
             ctx.startActivity(new Intent(ctx, HomeSettingsActivity.class)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
@@ -506,7 +666,15 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
             RecentAppsManager.recordAppLaunch(ctx, e.pkg);
             ctx.startActivity(i);
         } catch (Exception ex) {
-            Toast.makeText(ctx, ctx.getString(R.string.cant_open, e.label), Toast.LENGTH_SHORT).show();
+            try {
+                Intent fallback = new Intent(Intent.ACTION_MAIN)
+                        .addCategory(Intent.CATEGORY_LAUNCHER)
+                        .setComponent(e.component)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+                ctx.startActivity(fallback);
+            } catch (Exception ex2) {
+                Toast.makeText(ctx, ctx.getString(R.string.cant_open, e.label), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
