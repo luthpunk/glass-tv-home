@@ -1,7 +1,7 @@
 {
-  "versionCode": 18,
-  "versionName": "3.2.7-id",
+  "versionCode": 19,
+  "versionName": "3.2.8-id",
   "apkUrl": "https://github.com/luthpunk/glass-tv-home/releases/latest/download/glass-tv-home.apk",
-  "changelog": "feat(home): add Hapus option, default banner-only home filter, and right-side Glass Add-App sheet (v3.2.7-id)",
+  "changelog": "feat(home): translucent glass background for + banner and smooth scroll clipping in drawers (v3.2.8-id)",
   "releaseDate": "2026-10-29"
 }
