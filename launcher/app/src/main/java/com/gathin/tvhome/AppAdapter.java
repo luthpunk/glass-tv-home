@@ -361,6 +361,19 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
         h.focusRim.setAlpha(focused ? 1f : 0f);
         h.card.setScaleX(focused ? FOCUS_SCALE : 1f);
         h.card.setScaleY(focused ? FOCUS_SCALE : 1f);
+        if (e.kind == Entry.ADD_APP) {
+            android.graphics.drawable.GradientDrawable glassTileBg = new android.graphics.drawable.GradientDrawable(
+                    android.graphics.drawable.GradientDrawable.Orientation.TL_BR,
+                    new int[]{0x26FFFFFF, 0x12FFFFFF});
+            float density = ctx.getResources().getDisplayMetrics().density;
+            int wPx = h.card.getLayoutParams() != null && h.card.getLayoutParams().width > 0
+                    ? h.card.getLayoutParams().width : Math.round(DESIGN_W_DP * density);
+            glassTileBg.setCornerRadius(cornerRadius(wPx, density));
+            glassTileBg.setStroke(Math.max(1, Math.round(1.2f * density)), 0x40FFFFFF);
+            h.card.setBackground(glassTileBg);
+        } else {
+            h.card.setBackgroundResource(R.drawable.tile_bg);
+        }
         if (e.banner != null) {
             h.banner.setImageDrawable(e.banner);
             h.banner.setVisibility(View.VISIBLE);
@@ -502,21 +515,14 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
         Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(bmp);
 
-        // 1. Dark Frosted Slate-Glass Card Base
-        Paint bgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        bgPaint.setShader(new LinearGradient(0, 0, w, h,
-                new int[]{0xFF1E293B, 0xFF111827, 0xFF0B111E},
-                new float[]{0f, 0.55f, 1f}, Shader.TileMode.CLAMP));
-        c.drawRect(0, 0, w, h, bgPaint);
-
-        // 2. Soft Ambient Ice-Glass Radial Glow behind the '+' glass badge
+        // 1. Subtle Translucent Glass Sheen (no opaque dark slate fill, so focus stays on '+')
         Paint glowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        glowPaint.setShader(new RadialGradient(w * 0.5f, h * 0.5f, h * 0.65f,
-                new int[]{0x4056CCF2, 0x1A38BDF8, 0x00000000},
+        glowPaint.setShader(new RadialGradient(w * 0.5f, h * 0.5f, h * 0.58f,
+                new int[]{0x28FFFFFF, 0x0E38BDF8, 0x00000000},
                 new float[]{0f, 0.55f, 1f}, Shader.TileMode.CLAMP));
         c.drawRect(0, 0, w, h, glowPaint);
 
-        // 3. Center Frosted Glass Squircle Container (76x76)
+        // 2. Center Frosted Glass Squircle Container (76x76)
         float box = 76f;
         float l = (w - box) / 2f;
         float t = (h - box) / 2f;
@@ -525,12 +531,12 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
         RectF shadowRect = new RectF(l + 1.5f, t + 3.5f, l + box + 1.5f, t + box + 3.5f);
 
         Paint shadowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        shadowPaint.setColor(0x50000000);
+        shadowPaint.setColor(0x40000000);
         c.drawRoundRect(shadowRect, radius, radius, shadowPaint);
 
         Paint fillPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         fillPaint.setShader(new LinearGradient(l, t, l + box, t + box,
-                new int[]{0x48FFFFFF, 0x26E2F1FF, 0x1894A3B8},
+                new int[]{0x55FFFFFF, 0x30E2F1FF, 0x2294A3B8},
                 new float[]{0f, 0.5f, 1f}, Shader.TileMode.CLAMP));
         c.drawRoundRect(rect, radius, radius, fillPaint);
 
@@ -538,29 +544,29 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
         rimPaint.setStyle(Paint.Style.STROKE);
         rimPaint.setStrokeWidth(2.0f);
         rimPaint.setShader(new LinearGradient(l, t, l + box, t + box,
-                new int[]{0xFFFFFFFF, 0x33FFFFFF, 0xCCFFFFFF},
+                new int[]{0xFFFFFFFF, 0x40FFFFFF, 0xD9FFFFFF},
                 new float[]{0f, 0.5f, 1f}, Shader.TileMode.CLAMP));
         c.drawRoundRect(rect, radius, radius, rimPaint);
 
-        // 4. Crisp Glass '+' Sign in the center
+        // 3. Crisp Glass '+' Sign in the center
         float cx = w * 0.5f;
         float cy = h * 0.5f;
-        float arm = 16.5f;
+        float arm = 17f;
 
         Paint plusShadow = new Paint(Paint.ANTI_ALIAS_FLAG);
         plusShadow.setStyle(Paint.Style.STROKE);
-        plusShadow.setStrokeWidth(5.5f);
+        plusShadow.setStrokeWidth(5.8f);
         plusShadow.setStrokeCap(Paint.Cap.ROUND);
-        plusShadow.setColor(0x55000000);
+        plusShadow.setColor(0x4D000000);
         c.drawLine(cx - arm, cy + 2f, cx + arm, cy + 2f, plusShadow);
         c.drawLine(cx, cy - arm + 2f, cx, cy + arm + 2f, plusShadow);
 
         Paint plusPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         plusPaint.setStyle(Paint.Style.STROKE);
-        plusPaint.setStrokeWidth(5.5f);
+        plusPaint.setStrokeWidth(5.8f);
         plusPaint.setStrokeCap(Paint.Cap.ROUND);
         plusPaint.setShader(new LinearGradient(cx - arm, cy - arm, cx + arm, cy + arm,
-                new int[]{0xFFFFFFFF, 0xFFDFF4FF},
+                new int[]{0xFFFFFFFF, 0xFFE6F6FF},
                 new float[]{0f, 1f}, Shader.TileMode.CLAMP));
         c.drawLine(cx - arm, cy, cx + arm, cy, plusPaint);
         c.drawLine(cx, cy - arm, cx, cy + arm, plusPaint);

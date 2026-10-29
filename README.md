@@ -8,11 +8,11 @@
 
 <p align="center">
   <a href="https://github.com/luthpunk/glass-tv-home/releases/latest/download/glass-tv-home.apk">
-    <img src="https://img.shields.io/badge/Download_APK_v3.2.7--id-glass--tv--home.apk-success?style=for-the-badge&logo=android" alt="Download APK Terbaru">
+    <img src="https://img.shields.io/badge/Download_APK_v3.2.8--id-glass--tv--home.apk-success?style=for-the-badge&logo=android" alt="Download APK Terbaru">
   </a>
 </p>
 
-> 📦 **Unduh Langsung APK Terbaru**: Dapatkan rilis terbaru [**`glass-tv-home.apk`**](https://github.com/luthpunk/glass-tv-home/releases/latest/download/glass-tv-home.apk) (**v3.2.7-id**) yang siap dipasang di Android TV, Google TV, maupun STB (seperti ZTE `HG680-FJ` / `B860H`).
+> 📦 **Unduh Langsung APK Terbaru**: Dapatkan rilis terbaru [**`glass-tv-home.apk`**](https://github.com/luthpunk/glass-tv-home/releases/latest/download/glass-tv-home.apk) (**v3.2.8-id**) yang siap dipasang di Android TV, Google TV, maupun STB (seperti ZTE `HG680-FJ` / `B860H`).
 
 ---
 

@@ -4869,8 +4869,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         LinearLayout panel = new LinearLayout(this);
         panel.setOrientation(LinearLayout.VERTICAL);
         panel.setClickable(true);
-        panel.setClipChildren(false);
-        panel.setClipToPadding(false);
+        panel.setClipChildren(true);
+        panel.setClipToPadding(true);
         int padH = Math.round(22 * density);
         int padV = Math.round(16 * density);
         panel.setPadding(padH, padV, padH, padV);
@@ -4918,8 +4918,10 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         ScrollView scroll = new ScrollView(this);
         scroll.setVerticalScrollBarEnabled(false);
         scroll.setOverScrollMode(View.OVER_SCROLL_NEVER);
-        scroll.setClipChildren(false);
-        scroll.setClipToPadding(false);
+        scroll.setClipChildren(true);
+        scroll.setClipToPadding(true);
+        scroll.setVerticalFadingEdgeEnabled(true);
+        scroll.setFadingEdgeLength(Math.round(16 * density));
 
         LinearLayout gridRows = new LinearLayout(this);
         gridRows.setOrientation(LinearLayout.VERTICAL);
@@ -5209,8 +5211,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         LinearLayout panel = new LinearLayout(this);
         panel.setOrientation(LinearLayout.VERTICAL);
         panel.setClickable(true);
-        panel.setClipChildren(false);
-        panel.setClipToPadding(false);
+        panel.setClipChildren(true);
+        panel.setClipToPadding(true);
         int padH = Math.round(18 * density);
         int padV = Math.round(16 * density);
         panel.setPadding(padH, padV, padH, padV);
@@ -5258,8 +5260,10 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         final ScrollView scroll = new ScrollView(this);
         scroll.setVerticalScrollBarEnabled(false);
         scroll.setOverScrollMode(View.OVER_SCROLL_NEVER);
-        scroll.setClipChildren(false);
-        scroll.setClipToPadding(false);
+        scroll.setClipChildren(true);
+        scroll.setClipToPadding(true);
+        scroll.setVerticalFadingEdgeEnabled(true);
+        scroll.setFadingEdgeLength(Math.round(16 * density));
 
         final LinearLayout listContainer = new LinearLayout(this);
         listContainer.setOrientation(LinearLayout.VERTICAL);
