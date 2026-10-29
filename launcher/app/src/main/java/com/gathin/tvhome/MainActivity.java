@@ -4920,8 +4920,6 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         scroll.setOverScrollMode(View.OVER_SCROLL_NEVER);
         scroll.setClipChildren(true);
         scroll.setClipToPadding(true);
-        scroll.setVerticalFadingEdgeEnabled(true);
-        scroll.setFadingEdgeLength(Math.round(16 * density));
 
         LinearLayout gridRows = new LinearLayout(this);
         gridRows.setOrientation(LinearLayout.VERTICAL);
@@ -5126,7 +5124,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         panel.setScaleY(0.94f);
         overlay.animate().alpha(1f).setDuration(200).start();
         panel.animate().scaleX(1f).scaleY(1f).setDuration(220)
-                .setInterpolator(new android.view.animation.DecelerateInterpolator(1.5f)).start();
+                .setInterpolator(new android.view.animation.DecelerateInterpolator(1.5f))
+                .withEndAction(panel::invalidate).start();
 
         if (!cells.isEmpty()) {
             cells.get(0).requestFocus();
@@ -5262,8 +5261,6 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         scroll.setOverScrollMode(View.OVER_SCROLL_NEVER);
         scroll.setClipChildren(true);
         scroll.setClipToPadding(true);
-        scroll.setVerticalFadingEdgeEnabled(true);
-        scroll.setFadingEdgeLength(Math.round(16 * density));
 
         final LinearLayout listContainer = new LinearLayout(this);
         listContainer.setOrientation(LinearLayout.VERTICAL);
@@ -5472,7 +5469,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         panel.setTranslationX(36 * density);
         overlay.animate().alpha(1f).setDuration(180).start();
         panel.animate().translationX(0f).setDuration(220)
-                .setInterpolator(new android.view.animation.DecelerateInterpolator(1.6f)).start();
+                .setInterpolator(new android.view.animation.DecelerateInterpolator(1.6f))
+                .withEndAction(panel::invalidate).start();
 
         if (!rowViews.isEmpty()) {
             rowViews.get(0).requestFocus();

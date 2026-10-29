@@ -345,10 +345,13 @@ final class Backdrop {
                 shaderOf = b;
             }
             // Screen position, not window position: popups live in their own window, and the
-            // blurred copy is laid out like the whole screen.
+            // blurred copy is laid out like the whole screen. Compensate for any entrance
+            // scale/translation on owner so the glass texture never shifts when scrolling starts.
             owner.getLocationOnScreen(at);
+            float x0 = at[0] - owner.getTranslationX() - (1f - owner.getScaleX()) * owner.getPivotX();
+            float y0 = at[1] - owner.getTranslationY() - (1f - owner.getScaleY()) * owner.getPivotY();
             matrix.setScale(SCALE, SCALE);
-            matrix.postTranslate(-at[0], -at[1]);
+            matrix.postTranslate(-x0, -y0);
             if (drawTinted(canvas, rect, radius, alpha)) return;
             // Mid-change, the old picture's blur goes under the new one, which fades in on top.
             Bitmap p = previous;
@@ -384,7 +387,7 @@ final class Backdrop {
             }
             // The glow is stretched over the whole screen, as the ambient view stretches it.
             glowMatrix.setScale(dm.widthPixels / (float) g.getWidth(), dm.heightPixels / (float) g.getHeight());
-            glowMatrix.postTranslate(-at[0], -at[1]);
+            glowMatrix.postTranslate(-x0, -y0);
             // The same cross-fade as the room: the old colour fades out as the new one fades in.
             if (glowMix < 1f) {
                 glowOld.getShader().setLocalMatrix(glowMatrix);
