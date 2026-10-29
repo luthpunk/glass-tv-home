@@ -1,7 +1,7 @@
 {
-  "versionCode": 19,
-  "versionName": "3.2.8-id",
+  "versionCode": 20,
+  "versionName": "3.2.9-id",
   "apkUrl": "https://github.com/luthpunk/glass-tv-home/releases/latest/download/glass-tv-home.apk",
-  "changelog": "feat(home): translucent glass background for + banner and smooth scroll clipping in drawers (v3.2.8-id)",
+  "changelog": "fix(backdrop): lock glass backdrop coordinates against entrance scale/translation so wallpaper never shifts on scroll (v3.2.9-id)",
   "releaseDate": "2026-10-29"
 }
